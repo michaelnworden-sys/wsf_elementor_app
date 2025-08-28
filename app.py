@@ -1,5 +1,5 @@
 import streamlit as st
-from google.cloud import dialogflowcx_v3 as dialogflow
+from google.cloud import dialogflow_v3 as dialogflow
 from google.oauth2 import service_account
 import uuid
 import json
