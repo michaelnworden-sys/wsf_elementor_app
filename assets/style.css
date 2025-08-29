@@ -1,6 +1,6 @@
-/* assets/style.css - RESTORED TO LAST WORKING VERSION */
+/* assets/style.css - FINAL VERSION */
 
-/* --- WSF Color Palette Variables --- */
+/* --- WSF Color Palette --- */
 :root {
     --wsf-darkest: #006951;
     --wsf-mid-dark: #007B5F;
@@ -11,6 +11,9 @@
 }
 
 /* --- General App & Title Styling --- */
+body {
+    background-color: var(--wsf-lightest-cyan);
+}
 .stApp {
     background-color: var(--wsf-lightest-cyan);
 }
@@ -18,37 +21,20 @@ h1 {
     color: var(--wsf-darkest);
 }
 
-/* --- Chat Message Styling (using the correct selectors you found) --- */
-/* Target the USER message bubble */
-[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarUser"]) {
+/* --- Chat Message Styling --- */
+[data-testid="stChatMessage"] {
+    background-color: var(--wsf-white);
+    border: 1px solid var(--wsf-light-grey);
+    color: var(--wsf-text-dark);
+    border-radius: 10px;
+    padding: 1rem;
+}
+
+/* Target the USER message using the child avatar icon */
+[data-testid="stChatMessage"]:has([data-testid="stAvatarIcon-user"]) {
     background-color: var(--wsf-mid-dark);
     color: var(--wsf-white);
-    border-radius: 10px;
-    padding: 1rem;
 }
-
-/* Target the ASSISTANT message bubble */
-[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarAssistant"]) {
-    background-color: var(--wsf-white);
-    color: var(--wsf-text-dark);
-    border: 1px solid var(--wsf-light-grey);
-    border-radius: 10px;
-    padding: 1rem;
-}
-
-
-/* --- Avatar Icon Styling --- */
-/* Style the USER's circular avatar icon */
-[data-testid="stChatMessageAvatarUser"] {
-    background-color: var(--wsf-darkest);
-    color: var(--wsf-white);
-}
-
-/* Style the ASSISTANT's circular avatar icon */
-[data-testid="stChatMessageAvatarAssistant"] {
-    background-color: var(--wsf-white);
-}
-
 
 /* --- Chat Input Box & Button Styling --- */
 [data-testid="stChatInput"] {
