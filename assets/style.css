@@ -1,7 +1,4 @@
-/* assets/style.css - ADDING POPPINS FONT AND STYLING H1 */
-
-/* STEP 1: Import the Poppins font from Google. THIS MUST BE THE FIRST LINE. */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
+/* assets/style.css - RESTORED TO LAST WORKING VERSION */
 
 /* --- WSF Color Palette Variables --- */
 :root {
@@ -14,22 +11,15 @@
 }
 
 /* --- General App & Title Styling --- */
-/* STEP 2: Apply Poppins to the whole app. Include 'sans-serif' as a backup. */
-body {
-    font-family: 'Poppins', sans-serif;
-}
-
 .stApp {
     background-color: var(--wsf-lightest-cyan);
 }
-
-/* Style the main title with the darkest green */
 h1 {
     color: var(--wsf-darkest);
-    font-family: 'Poppins', sans-serif; /* Explicitly set font for the header */
 }
 
 /* --- Chat Message Styling (using the correct selectors you found) --- */
+/* Target the USER message bubble */
 [data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarUser"]) {
     background-color: var(--wsf-mid-dark);
     color: var(--wsf-white);
@@ -37,6 +27,7 @@ h1 {
     padding: 1rem;
 }
 
+/* Target the ASSISTANT message bubble */
 [data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarAssistant"]) {
     background-color: var(--wsf-white);
     color: var(--wsf-text-dark);
@@ -47,10 +38,13 @@ h1 {
 
 
 /* --- Avatar Icon Styling --- */
+/* Style the USER's circular avatar icon */
 [data-testid="stChatMessageAvatarUser"] {
     background-color: var(--wsf-darkest);
     color: var(--wsf-white);
 }
+
+/* Style the ASSISTANT's circular avatar icon */
 [data-testid="stChatMessageAvatarAssistant"] {
     background-color: var(--wsf-white);
 }
@@ -64,7 +58,6 @@ h1 {
     background-color: var(--wsf-mid-dark);
     color: var(--wsf-white);
     border: none;
-    font-family: 'Poppins', sans-serif; /* Ensure buttons also use Poppins */
 }
 .stButton>button:hover {
     background-color: var(--wsf-darkest);
