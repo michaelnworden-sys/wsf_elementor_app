@@ -1,0 +1,41 @@
+/* assets/style.css */
+
+/* --- Overall App Styling --- */
+/* This targets the main block of your Streamlit app */
+.stApp {
+    background-color: #f0f2f6; /* A light grey similar to the website body */
+}
+
+
+/* --- Chat Message Styling --- */
+/* Style for user messages (outgoing) */
+[data-testid="chat-bubble-owner-user"] {
+    background-color: #00857c; /* WSDOT dark teal for user messages */
+}
+
+/* Style for assistant messages (incoming) */
+[data-testid="chat-bubble-owner-assistant"] {
+    background-color: #FFFFFF; /* White for assistant messages */
+    color: #333333; /* Darker text for readability on a white background */
+    border: 1px solid #d1d1d1; /* A light border for definition */
+}
+
+/* --- Chat Input Box Styling --- */
+/* Targets the "Ask your question:" input area at the bottom */
+[data-testid="stChatInput"] {
+    background-color: #FFFFFF;
+}
+
+/* --- Button Styling --- */
+/* General button styling to match the theme */
+.stButton>button {
+    background-color: #00857c;
+    color: white;
+    border-radius: 5px;
+    border: none;
+}
+
+.stButton>button:hover {
+    background-color: #005f5f; /* A slightly darker teal for hover effect */
+    color: white;
+}

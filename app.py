@@ -4,6 +4,12 @@ from google.oauth2 import service_account
 import uuid
 import json
 
+# --- FUNCTION TO LOAD LOCAL CSS ---
+# This function will read your CSS file and apply it to the app.
+def local_css(file_name):
+    with open(file_name) as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
 # --- CRITICAL: PASTE YOUR INFO HERE ---
 PROJECT_ID = "lumina-content-intelligence"
 AGENT_ID = "39100170-63ca-4c8e-8c10-b8d6c1d1b55a"
@@ -12,6 +18,7 @@ AGENT_ID = "39100170-63ca-4c8e-8c10-b8d6c1d1b55a"
 
 # Function to connect to Dialogflow agent
 def detect_intent_texts(text, session_id):
+    # ... (the rest of your function remains exactly the same) ...
     location = "global"
     client_options = {"api_endpoint": f"{location}-dialogflow.googleapis.com"}
     
@@ -60,11 +67,16 @@ def detect_intent_texts(text, session_id):
 # --- Streamlit User Interface ---
 st.title("San Juan Playbooks")
 
+# --- APPLY THE CUSTOM CSS ---
+local_css("assets/style.css")
+
 # Initialize chat history and session ID
 if "session_id" not in st.session_state:
     st.session_state.session_id = str(uuid.uuid4())
 if "messages" not in st.session_state:
     st.session_state.messages = []
+
+# ... (the rest of your UI code remains exactly the same) ...
 
 # Display past messages
 for message in st.session_state.messages:
