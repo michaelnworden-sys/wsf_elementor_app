@@ -65,7 +65,7 @@ def detect_intent_texts(text, session_id):
 
 
 # --- Streamlit User Interface ---
-st.title("San Juan Playbooks")
+st.title("Welcome to SoundHopper")
 
 # --- APPLY THE CUSTOM CSS ---
 local_css("assets/style.css")

@@ -1,66 +1,65 @@
-/* assets/style.css - UPDATED WITH OFFICIAL WSF PALETTE */
+/* assets/style.css - FINAL VERSION INCORPORATING AVATARS */
 
-/* --- WSF Color Palette --- */
-/* Darkest: #006951 */
-/* Mid-Dark: #007B5F */
-/* Light Grey/Green: #E0EFEC */
-/* Lightest Cyan: #F2FBFC */
-/* White: #FFFFFF */
-
+/* --- WSF Color Palette Variables --- */
+:root {
+    --wsf-darkest: #006951;
+    --wsf-mid-dark: #007B5F;
+    --wsf-light-grey: #E0EFEC;
+    --wsf-lightest-cyan: #F2FBFC;
+    --wsf-white: #FFFFFF;
+    --wsf-text-dark: #262730;
+}
 
 /* --- General App & Title Styling --- */
-/* Use the lightest, most subtle color for the overall background */
 .stApp {
-    background-color: #F2FBFC; /* Lightest Cyan */
+    background-color: var(--wsf-lightest-cyan);
 }
-
-/* Style the main title with the darkest, most official-looking color */
 h1 {
-    color: #006951; /* Darkest */
+    color: var(--wsf-darkest);
 }
-
 
 /* --- Chat Message Styling --- */
-/* This is the main container for each chat message block */
 [data-testid="stChatMessage"] {
-    padding: 1rem;
+    border: 1px solid var(--wsf-light-grey);
     border-radius: 10px;
-    border: none; /* Removing the default border */
+    padding: 1rem;
 }
 
-/* Style the USER's message bubble */
-[data-testid="stChatMessage"]:has([data-testid="stChatMessageContent"] [data-testid="stAvatarIcon-user"]) {
-    background-color: #007B5F;  /* Mid-Dark */
-    color: #FFFFFF; /* White text for high contrast and readability */
+/* Target the USER message using the child avatar icon */
+[data-testid="stChatMessage"]:has([data-testid="stAvatarIcon-user"]) {
+    background-color: var(--wsf-mid-dark);
+    color: var(--wsf-white); /* Make text inside the bubble white */
 }
 
-/* Style the ASSISTANT's message bubble */
-[data-testid="stChatMessage"]:has([data-testid="stChatMessageContent"] [data-testid="stAvatarIcon-assistant"]) {
-    background-color: #FFFFFF; /* White, as you liked */
-    /* Add a very subtle border using a color from the palette to make it pop */
-    border: 1px solid #E0EFEC; /* Light Grey/Green */
-    color: #262730; /* A dark grey for the text to ensure it's not the default blue */
+/* Target the ASSISTANT message */
+[data-testid="stChatMessage"]:has([data-testid="stAvatarIcon-assistant"]) {
+    background-color: var(--wsf-white);
+    color: var(--wsf-text-dark); /* Make text inside the bubble dark */
+}
+
+/* --- NEW: Avatar Icon Styling --- */
+/* Style the USER's circular avatar icon */
+[data-testid="stAvatarIcon-user"] {
+    background-color: var(--wsf-darkest);
+    color: var(--wsf-white);
+}
+
+/* Style the ASSISTANT's circular avatar icon */
+[data-testid="stAvatarIcon-assistant"] {
+    background-color: var(--wsf-mid-dark);
+    color: var(--wsf-white);
 }
 
 
-/* --- Chat Input Box Styling --- */
-/* Keep the input area clean and simple */
+/* --- Chat Input Box & Button Styling --- */
 [data-testid="stChatInput"] {
-    background-color: #FFFFFF;
+    background-color: var(--wsf-white);
 }
-
-
-/* --- Button Styling --- */
-/* Use a strong action color for the buttons */
 .stButton>button {
-    background-color: #007B5F; /* Mid-Dark */
-    color: #FFFFFF;
-    border-radius: 5px;
+    background-color: var(--wsf-mid-dark);
+    color: var(--wsf-white);
     border: none;
 }
-
-/* On hover, make the button slightly darker for a nice feedback effect */
 .stButton>button:hover {
-    background-color: #006951; /* Darkest */
-    color: #FFFFFF;
+    background-color: var(--wsf-darkest);
 }
