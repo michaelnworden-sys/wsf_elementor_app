@@ -1,41 +1,66 @@
-/* assets/style.css */
+/* assets/style.css - UPDATED WITH OFFICIAL WSF PALETTE */
 
-/* --- Overall App Styling --- */
-/* This targets the main block of your Streamlit app */
+/* --- WSF Color Palette --- */
+/* Darkest: #006951 */
+/* Mid-Dark: #007B5F */
+/* Light Grey/Green: #E0EFEC */
+/* Lightest Cyan: #F2FBFC */
+/* White: #FFFFFF */
+
+
+/* --- General App & Title Styling --- */
+/* Use the lightest, most subtle color for the overall background */
 .stApp {
-    background-color: #f0f2f6; /* A light grey similar to the website body */
+    background-color: #F2FBFC; /* Lightest Cyan */
+}
+
+/* Style the main title with the darkest, most official-looking color */
+h1 {
+    color: #006951; /* Darkest */
 }
 
 
 /* --- Chat Message Styling --- */
-/* Style for user messages (outgoing) */
-[data-testid="chat-bubble-owner-user"] {
-    background-color: #00857c; /* WSDOT dark teal for user messages */
+/* This is the main container for each chat message block */
+[data-testid="stChatMessage"] {
+    padding: 1rem;
+    border-radius: 10px;
+    border: none; /* Removing the default border */
 }
 
-/* Style for assistant messages (incoming) */
-[data-testid="chat-bubble-owner-assistant"] {
-    background-color: #FFFFFF; /* White for assistant messages */
-    color: #333333; /* Darker text for readability on a white background */
-    border: 1px solid #d1d1d1; /* A light border for definition */
+/* Style the USER's message bubble */
+[data-testid="stChatMessage"]:has([data-testid="stChatMessageContent"] [data-testid="stAvatarIcon-user"]) {
+    background-color: #007B5F;  /* Mid-Dark */
+    color: #FFFFFF; /* White text for high contrast and readability */
 }
+
+/* Style the ASSISTANT's message bubble */
+[data-testid="stChatMessage"]:has([data-testid="stChatMessageContent"] [data-testid="stAvatarIcon-assistant"]) {
+    background-color: #FFFFFF; /* White, as you liked */
+    /* Add a very subtle border using a color from the palette to make it pop */
+    border: 1px solid #E0EFEC; /* Light Grey/Green */
+    color: #262730; /* A dark grey for the text to ensure it's not the default blue */
+}
+
 
 /* --- Chat Input Box Styling --- */
-/* Targets the "Ask your question:" input area at the bottom */
+/* Keep the input area clean and simple */
 [data-testid="stChatInput"] {
     background-color: #FFFFFF;
 }
 
+
 /* --- Button Styling --- */
-/* General button styling to match the theme */
+/* Use a strong action color for the buttons */
 .stButton>button {
-    background-color: #00857c;
-    color: white;
+    background-color: #007B5F; /* Mid-Dark */
+    color: #FFFFFF;
     border-radius: 5px;
     border: none;
 }
 
+/* On hover, make the button slightly darker for a nice feedback effect */
 .stButton>button:hover {
-    background-color: #005f5f; /* A slightly darker teal for hover effect */
-    color: white;
+    background-color: #006951; /* Darkest */
+    color: #FFFFFF;
 }
