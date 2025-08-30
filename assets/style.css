@@ -1,0 +1,42 @@
+/* assets/style.css - FINAL CLEANED VERSION */
+
+/* --- WSF Color Palette --- */
+:root {
+    --wsf-darkest: #006951;
+    --wsf-mid-dark: #007B5F;
+    --wsf-light-grey: #E0EFEC;
+    --wsf-lightest-cyan: #F2FBFC;
+    --wsf-white: #FFFFFF;
+    --wsf-text-dark: #262730;
+}
+
+/* --- General App & Title Styling --- */
+/* These are now mostly handled by config.toml, but can be kept for overrides */
+h1, #welcome-to-sound-hopper {
+    color: var(--wsf-darkest);
+}
+
+/* --- Chat Message Styling --- */
+/* This rule for the user message is still very important */
+[data-testid="stChatMessage"]:has([data-testid="stAvatarIcon-user"]) {
+    background-color: var(--wsf-mid-dark);
+    color: var(--wsf-white);
+}
+
+/* --- Chat Input Box & Button Styling --- */
+/* These styles for buttons cannot be done in config.toml */
+[data-testid="stChatInput"] {
+    background-color: var(--wsf-white);
+}
+
+.stButton>button {
+    background-color: var(--wsf-mid-dark);
+    color: var(--wsf-white);
+    border: none;
+    border-radius: 50px;
+    padding: 8px 20px;
+    width: 100%;
+}
+.stButton>button:hover {
+    background-color: var(--wsf-darkest);
+}
