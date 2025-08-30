@@ -1,4 +1,4 @@
-/* assets/style.css - UPDATED VERSION */
+/* assets/style.css - FINAL CORRECTED VERSION */
 
 /* --- WSF Color Palette --- */
 :root {
@@ -42,16 +42,23 @@ h1, #welcome-to-sound-hopper {
 /* User avatar bubble */
 [data-testid="stAvatarIcon-user"] {
     background-color: var(--wsf-avatar-user) !important;
-    color: var(--wsf-white) !important;
-    border-radius: 50% !important;
+}
+
+/* --- FIX: ADD THIS RULE FOR THE USER ICON COLOR --- */
+[data-testid="stAvatarIcon-user"] svg {
+    fill: var(--wsf-white) !important;
 }
 
 /* Assistant avatar bubble */
 [data-testid="stAvatarIcon-assistant"] {
     background-color: var(--wsf-avatar-assistant) !important;
-    color: var(--wsf-darkest) !important;
-    border-radius: 50% !important;
 }
+
+/* --- FIX: ADD THIS RULE FOR THE ASSISTANT ICON COLOR --- */
+[data-testid="stAvatarIcon-assistant"] svg {
+    fill: var(--wsf-darkest) !important;
+}
+
 
 /* --- Chat Input Box & Button Styling --- */
 [data-testid="stChatInput"] {
