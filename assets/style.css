@@ -1,4 +1,4 @@
-/* assets/style.css - FINAL CORRECTED VERSION */
+/* assets/style.css - HIGH SPECIFICITY VERSION */
 
 /* --- WSF Color Palette --- */
 :root {
@@ -32,31 +32,35 @@ h1, #welcome-to-sound-hopper {
     padding: 1rem;
 }
 
-/* Target the USER message using the child avatar icon */
 [data-testid="stChatMessage"]:has([data-testid="stAvatarIcon-user"]) {
     background-color: var(--wsf-mid-dark);
     color: var(--wsf-white);
 }
 
-/* --- Avatar Icon Overrides --- */
-/* User avatar bubble */
-[data-testid="stAvatarIcon-user"] {
-    background-color: var(--wsf-avatar-user) !important;
+/*
+--- AVATAR STYLING USING HIGH SPECIFICITY ---
+This targets the icon *inside* the container you identified.
+This makes our rule stronger than the default Streamlit style.
+*/
+
+/* User Avatar Background */
+[data-testid="stChatMessageAvatarUser"] [data-testid="stAvatarIcon-user"] {
+    background-color: var(--wsf-avatar-user);
 }
 
-/* --- FIX: ADD THIS RULE FOR THE USER ICON COLOR --- */
-[data-testid="stAvatarIcon-user"] svg {
-    fill: var(--wsf-white) !important;
+/* User Icon Shape (the person) */
+[data-testid="stChatMessageAvatarUser"] [data-testid="stAvatarIcon-user"] svg {
+    fill: var(--wsf-white);
 }
 
-/* Assistant avatar bubble */
-[data-testid="stAvatarIcon-assistant"] {
-    background-color: var(--wsf-avatar-assistant) !important;
+/* Assistant Avatar Background */
+[data-testid="stChatMessageAvatarAssistant"] [data-testid="stAvatarIcon-assistant"] {
+    background-color: var(--wsf-avatar-assistant);
 }
 
-/* --- FIX: ADD THIS RULE FOR THE ASSISTANT ICON COLOR --- */
-[data-testid="stAvatarIcon-assistant"] svg {
-    fill: var(--wsf-darkest) !important;
+/* Assistant Icon Shape (the robot) */
+[data-testid="stChatMessageAvatarAssistant"] [data-testid="stAvatarIcon-assistant"] svg {
+    fill: var(--wsf-darkest);
 }
 
 
@@ -65,14 +69,13 @@ h1, #welcome-to-sound-hopper {
     background-color: var(--wsf-white);
 }
 
-/* --- UPDATED BUTTON STYLE --- */
 .stButton>button {
     background-color: var(--wsf-mid-dark);
     color: var(--wsf-white);
     border: none;
-    border-radius: 50px; /* This makes the corners fully rounded */
-    padding: 8px 20px;   /* This adds some space around the text */
-    width: 100%;         /* This makes the buttons fill their columns */
+    border-radius: 50px;
+    padding: 8px 20px;
+    width: 100%;
 }
 .stButton>button:hover {
     background-color: var(--wsf-darkest);
