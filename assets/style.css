@@ -1,4 +1,4 @@
-/* assets/style.css - HIGH SPECIFICITY VERSION */
+/* assets/style.css - FINAL VERSION WITH RAW HEX CODES */
 
 /* --- WSF Color Palette --- */
 :root {
@@ -38,29 +38,27 @@ h1, #welcome-to-sound-hopper {
 }
 
 /*
---- AVATAR STYLING USING HIGH SPECIFICITY ---
-This targets the icon *inside* the container you identified.
-This makes our rule stronger than the default Streamlit style.
+--- AVATAR STYLING: HIGH SPECIFICITY & RAW HEX CODES ---
 */
 
 /* User Avatar Background */
 [data-testid="stChatMessageAvatarUser"] [data-testid="stAvatarIcon-user"] {
-    background-color: var(--wsf-avatar-user);
+    background-color: #007B5F !important;
 }
 
 /* User Icon Shape (the person) */
 [data-testid="stChatMessageAvatarUser"] [data-testid="stAvatarIcon-user"] svg {
-    fill: var(--wsf-white);
+    fill: #FFFFFF !important;
 }
 
 /* Assistant Avatar Background */
 [data-testid="stChatMessageAvatarAssistant"] [data-testid="stAvatarIcon-assistant"] {
-    background-color: var(--wsf-avatar-assistant);
+    background-color: #B9E4DC !important;
 }
 
 /* Assistant Icon Shape (the robot) */
 [data-testid="stChatMessageAvatarAssistant"] [data-testid="stAvatarIcon-assistant"] svg {
-    fill: var(--wsf-darkest);
+    fill: #006951 !important;
 }
 
 
