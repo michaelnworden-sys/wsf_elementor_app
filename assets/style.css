@@ -1,13 +1,15 @@
-/* assets/style.css - FINAL VERSION */
+/* assets/style.css - UPDATED VERSION */
 
 /* --- WSF Color Palette --- */
 :root {
-    --wsf-darkest: #006951;
-    --wsf-mid-dark: #007B5F;
+    --wsf-darkest: #006951;   /* dark green */
+    --wsf-mid-dark: #007B5F;  /* medium green */
     --wsf-light-grey: #E0EFEC;
     --wsf-lightest-cyan: #F2FBFC;
     --wsf-white: #FFFFFF;
     --wsf-text-dark: #262730;
+    --wsf-avatar-user: #007B5F;   /* dark green for user */
+    --wsf-avatar-assistant: #B9E4DC; /* light green for assistant */
 }
 
 /* --- General App & Title Styling --- */
@@ -17,8 +19,8 @@ body {
 .stApp {
     background-color: var(--wsf-lightest-cyan);
 }
-h1 {
-    color: var(--wsf-darkest);
+h1, #welcome-to-sound-hopper {
+    color: var(--wsf-darkest); /* header in dark green */
 }
 
 /* --- Chat Message Styling --- */
@@ -34,6 +36,21 @@ h1 {
 [data-testid="stChatMessage"]:has([data-testid="stAvatarIcon-user"]) {
     background-color: var(--wsf-mid-dark);
     color: var(--wsf-white);
+}
+
+/* --- Avatar Icon Overrides --- */
+/* User avatar bubble */
+[data-testid="stAvatarIcon-user"] {
+    background-color: var(--wsf-avatar-user) !important;
+    color: var(--wsf-white) !important;
+    border-radius: 50% !important;
+}
+
+/* Assistant avatar bubble */
+[data-testid="stAvatarIcon-assistant"] {
+    background-color: var(--wsf-avatar-assistant) !important;
+    color: var(--wsf-darkest) !important;
+    border-radius: 50% !important;
 }
 
 /* --- Chat Input Box & Button Styling --- */

@@ -74,19 +74,6 @@ for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-# --- START: NEW SECTION TO DISPLAY BUTTONS ---
-# This block will only show the buttons if the chat history is empty.
-if not st.session_state.messages:
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.button("check fares")
-    with col2:
-        st.button("find schedules")
-    with col3:
-        st.button("reservations")
-# --- END: NEW SECTION TO DISPLAY BUTTONS ---
-
-
 if user_input := st.chat_input("Ask your question:"):
     st.session_state.messages.append({"role": "user", "content": user_input})
     with st.chat_message("user"):
