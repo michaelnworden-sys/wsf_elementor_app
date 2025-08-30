@@ -33,18 +33,15 @@ def detect_intent_texts(text, session_id):
         text_input = dialogflow.TextInput(text=text)
         query_input = dialogflow.QueryInput(text=text_input, language_code="en")
 
-        # --- COMPLETELY REMOVE AUDIO CONFIG ---
         request = dialogflow.DetectIntentRequest(
             session=session_path, 
             query_input=query_input
-            # No audio config at all
         )
         
         response = session_client.detect_intent(request=request)
 
         messages = []
 
-        # --- SAFER MESSAGE PROCESSING ---
         for msg in response.query_result.response_messages:
             try:
                 if hasattr(msg, 'text') and msg.text:
@@ -54,9 +51,7 @@ def detect_intent_texts(text, session_id):
                 elif hasattr(msg, 'payload') and msg.payload:
                     payload = dict(msg.payload)
                     messages.append({"type": "payload", "content": payload})
-                # Skip audio processing entirely
             except Exception as msg_error:
-                # Skip problematic messages
                 continue
 
         return messages
@@ -78,6 +73,19 @@ if "messages" not in st.session_state:
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
+
+# --- START: NEW SECTION TO DISPLAY BUTTONS ---
+# This block will only show the buttons if the chat history is empty.
+if not st.session_state.messages:
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.button("check fares")
+    with col2:
+        st.button("find schedules")
+    with col3:
+        st.button("reservations")
+# --- END: NEW SECTION TO DISPLAY BUTTONS ---
+
 
 if user_input := st.chat_input("Ask your question:"):
     st.session_state.messages.append({"role": "user", "content": user_input})

@@ -40,10 +40,15 @@ h1 {
 [data-testid="stChatInput"] {
     background-color: var(--wsf-white);
 }
+
+/* --- UPDATED BUTTON STYLE --- */
 .stButton>button {
     background-color: var(--wsf-mid-dark);
     color: var(--wsf-white);
     border: none;
+    border-radius: 50px; /* This makes the corners fully rounded */
+    padding: 8px 20px;   /* This adds some space around the text */
+    width: 100%;         /* This makes the buttons fill their columns */
 }
 .stButton>button:hover {
     background-color: var(--wsf-darkest);
