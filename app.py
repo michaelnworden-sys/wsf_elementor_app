@@ -36,17 +36,11 @@ def detect_intent_texts(text, session_id):
         text_input = dialogflow.TextInput(text=text)
         query_input = dialogflow.QueryInput(text=text_input, language_code="en")
 
-        # --- THIS IS THE FIX ---
-        # 1. Create a config that specifies NO audio output
-        audio_config = dialogflow.OutputAudioConfig(
-            audio_encoding=dialogflow.OutputAudioEncoding.OUTPUT_AUDIO_ENCODING_UNSPECIFIED
-        )
-        
-        # 2. Add the query_input AND the new audio_config to the request
+        # --- SIMPLIFIED REQUEST - NO AUDIO CONFIG ---
         request = dialogflow.DetectIntentRequest(
             session=session_path, 
             query_input=query_input,
-            output_audio_config=audio_config, # <-- ADD THIS LINE
+            # Removed output_audio_config entirely
         )
         # --- END OF FIX ---
 
@@ -65,9 +59,6 @@ def detect_intent_texts(text, session_id):
                 payload = dict(msg.payload)
                 messages.append({"type": "payload", "content": payload})
 
-            # Even though you have code to handle audio, the error happens
-            # before this code is ever reached. The fix above prevents the
-            # 'output_audio' field from being sent in the first place.
             elif msg.output_audio:
                 messages.append({"type": "audio", "content": msg.output_audio})
 
@@ -77,7 +68,6 @@ def detect_intent_texts(text, session_id):
         return messages
 
     except Exception as e:
-        # The error message here is what you're seeing on the screen
         st.error(f"An error occurred with Dialogflow: {e}")
         return []
 
@@ -93,8 +83,6 @@ if "session_id" not in st.session_state:
     st.session_state.session_id = str(uuid.uuid4())
 if "messages" not in st.session_state:
     st.session_state.messages = []
-
-# ... (the rest of your UI code remains exactly the same) ...
 
 # Display past messages
 for message in st.session_state.messages:
