@@ -18,7 +18,6 @@ AGENT_ID = "39100170-63ca-4c8e-8c10-b8d6c1d1b55a"
 
 # Function to connect to Dialogflow agent
 def detect_intent_texts(text, session_id):
-    # ... (the rest of your function remains exactly the same) ...
     location = "global"
     client_options = {"api_endpoint": f"{location}-dialogflow.googleapis.com"}
     
@@ -36,11 +35,26 @@ def detect_intent_texts(text, session_id):
         
         text_input = dialogflow.TextInput(text=text)
         query_input = dialogflow.QueryInput(text=text_input, language_code="en")
-        request = dialogflow.DetectIntentRequest(session=session_path, query_input=query_input)
+
+        # --- THIS IS THE FIX ---
+        # 1. Create a config that specifies NO audio output
+        audio_config = dialogflow.OutputAudioConfig(
+            audio_encoding=dialogflow.OutputAudioEncoding.OUTPUT_AUDIO_ENCODING_UNSPECIFIED
+        )
+        
+        # 2. Add the query_input AND the new audio_config to the request
+        request = dialogflow.DetectIntentRequest(
+            session=session_path, 
+            query_input=query_input,
+            output_audio_config=audio_config, # <-- ADD THIS LINE
+        )
+        # --- END OF FIX ---
+
         response = session_client.detect_intent(request=request)
 
         messages = []
 
+        # This part of your code is perfect and doesn't need to change
         for msg in response.query_result.response_messages:
             if msg.text:
                 for t in msg.text.text:
@@ -51,6 +65,9 @@ def detect_intent_texts(text, session_id):
                 payload = dict(msg.payload)
                 messages.append({"type": "payload", "content": payload})
 
+            # Even though you have code to handle audio, the error happens
+            # before this code is ever reached. The fix above prevents the
+            # 'output_audio' field from being sent in the first place.
             elif msg.output_audio:
                 messages.append({"type": "audio", "content": msg.output_audio})
 
@@ -60,6 +77,7 @@ def detect_intent_texts(text, session_id):
         return messages
 
     except Exception as e:
+        # The error message here is what you're seeing on the screen
         st.error(f"An error occurred with Dialogflow: {e}")
         return []
 
