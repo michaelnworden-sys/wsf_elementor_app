@@ -38,6 +38,16 @@ def inject_custom_css():
     height: 1.2em !important;
     width: auto !important;
 }
+                [data-testid="stChatInput"] button {
+    background-color: #00A693 !important;
+    color: white !important;
+    border-radius: 50% !important;
+    border: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: auto !important;
+}
     
     /* Assistant avatar - light teal with dark teal icon (like your screenshot) */
     div[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarAssistant"]) div[class*="st-emotion-cache"] {
@@ -51,17 +61,23 @@ def inject_custom_css():
         fill: #006B5B !important;
     }
     
-    /* Clean white message boxes with centered text and more padding */
+    /* Clean white message boxes with TRUE vertical centering for all text */
 [data-testid="stChatMessage"] {
     background-color: white !important;
     border: 1px solid #E0EFEC !important;
     border-radius: 16px !important;
     box-shadow: none !important;
-    padding: 24px 32px !important;
+    padding: 32px 40px !important;
     margin: 8px 0 !important;
     display: flex !important;
     align-items: center !important;
-    min-height: 60px !important;
+    min-height: 80px !important;
+}
+
+[data-testid="stChatMessage"] > div {
+    display: flex !important;
+    align-items: center !important;
+    width: 100% !important;
 }
 
 [data-testid="stChatMessage"] p {
@@ -71,6 +87,7 @@ def inject_custom_css():
     font-family: 'Poppins', sans-serif !important;
     margin: 0 !important;
     line-height: 1.5 !important;
+    text-align: left !important;
     flex: 1 !important;
 }
     
