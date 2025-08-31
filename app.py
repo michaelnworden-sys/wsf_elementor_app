@@ -4,6 +4,130 @@ from google.oauth2 import service_account
 import uuid
 import json
 
+# Add this CSS injection function
+def inject_custom_css():
+    st.markdown("""
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+    
+    /* Apply Poppins font to everything */
+    .main, .stApp, html, body, [class*="css"] {
+        font-family: 'Poppins', sans-serif !important;
+    }
+    
+    /* User avatar - WSF teal with white icon */
+    div[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarUser"]) div[class*="st-emotion-cache"] {
+        background-color: #00A693 !important;
+        color: white !important;
+        border-radius: 12px !important;
+    }
+    
+    div[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarUser"]) svg {
+        color: white !important;
+        fill: white !important;
+    }
+    
+    /* Assistant avatar - light teal background with dark teal icon */
+    div[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarAssistant"]) div[class*="st-emotion-cache"] {
+        background-color: #E6F7F5 !important;
+        color: #006B5B !important;
+        border-radius: 12px !important;
+        border: 2px solid #00A693 !important;
+    }
+    
+    div[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarAssistant"]) svg {
+        color: #006B5B !important;
+        fill: #006B5B !important;
+    }
+    
+    /* Force chat message backgrounds to be clean white */
+    [data-testid="stChatMessage"] {
+        background-color: white !important;
+        border-radius: 16px !important;
+        padding: 16px !important;
+        margin: 8px 0 !important;
+        box-shadow: 0 2px 8px rgba(0, 166, 147, 0.1) !important;
+        border: 1px solid #F0F9F8 !important;
+    }
+    
+    /* Clean up chat input styling */
+    [data-testid="stChatInput"] {
+        background-color: white !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+    
+    [data-testid="stChatInput"] > div {
+        background-color: white !important;
+        border: 2px solid #00A693 !important;
+        border-radius: 25px !important;
+        box-shadow: 0 4px 12px rgba(0, 166, 147, 0.15) !important;
+    }
+    
+    [data-testid="stChatInput"] textarea {
+        background-color: white !important;
+        color: #2D3748 !important;
+        border: none !important;
+        box-shadow: none !important;
+        outline: none !important;
+        font-family: 'Poppins', sans-serif !important;
+        font-size: 16px !important;
+    }
+    
+    [data-testid="stChatInput"] textarea:focus {
+        border: none !important;
+        box-shadow: 0 0 0 3px rgba(0, 166, 147, 0.2) !important;
+        outline: none !important;
+    }
+    
+    /* Remove any decorative elements */
+    [data-testid="stChatInput"] *::before,
+    [data-testid="stChatInput"] *::after {
+        display: none !important;
+    }
+    
+    /* Style the send button */
+    [data-testid="stChatInput"] button {
+        background-color: #00A693 !important;
+        color: white !important;
+        border-radius: 50% !important;
+        border: none !important;
+        width: 48px !important;
+        height: 48px !important;
+    }
+    
+    [data-testid="stChatInput"] button:hover {
+        background-color: #006B5B !important;
+        transform: scale(1.05) !important;
+        transition: all 0.2s ease !important;
+    }
+    
+    /* Main title styling */
+    h1 {
+        color: #006B5B !important;
+        font-family: 'Poppins', sans-serif !important;
+        font-weight: 700 !important;
+        text-align: center !important;
+        padding: 20px 0 !important;
+        border-bottom: 3px solid #00A693 !important;
+        margin-bottom: 30px !important;
+    }
+    
+    /* Chat message text styling */
+    [data-testid="stChatMessage"] p {
+        font-family: 'Poppins', sans-serif !important;
+        color: #2D3748 !important;
+        line-height: 1.6 !important;
+        margin: 0 !important;
+    }
+    
+    /* Spinner styling */
+    .stSpinner > div {
+        border-color: #00A693 !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
 # --- FUNCTION TO LOAD LOCAL CSS ---
 def local_css(file_name):
     with open(file_name) as f:
@@ -61,8 +185,10 @@ def detect_intent_texts(text, session_id):
         return []
 
 # --- Streamlit User Interface ---
-st.title("Welcome to SoundHopper")
+st.title("🚢 Welcome to SoundHopper")
 
+# Inject CSS styling
+inject_custom_css()
 local_css("assets/style.css")
 
 if "session_id" not in st.session_state:
@@ -74,7 +200,7 @@ for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-if user_input := st.chat_input("Ask your question:"):
+if user_input := st.chat_input("Ask your question about Washington State Ferries..."):
     st.session_state.messages.append({"role": "user", "content": user_input})
     with st.chat_message("user"):
         st.markdown(user_input)

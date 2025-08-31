@@ -1,121 +1,143 @@
-/* assets/style.css - AGGRESSIVE STYLING VERSION */
+/* WSF-inspired styling with Poppins font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
-/* --- WSF Color Palette --- */
+/* WSF Color Palette inspired by their website */
 :root {
-    --wsf-darkest: #006951 !important;
-    --wsf-mid-dark: #007B5F !important;
-    --wsf-light-grey: #E0EFEC !important;
-    --wsf-lightest-cyan: #F2FBFC !important;
-    --wsf-white: #FFFFFF !important;
-    --wsf-text-dark: #262730 !important;
+    --wsf-teal: #00A693;
+    --wsf-dark-teal: #006B5B;
+    --wsf-light-teal: #E6F7F5;
+    --wsf-accent: #1BA3E0;
+    --wsf-white: #FFFFFF;
+    --wsf-text: #2D3748;
+    --wsf-light-gray: #F7FAFC;
+    --wsf-border: #E2E8F0;
 }
 
-/* --- General App & Title Styling --- */
-h1, #welcome-to-sound-hopper {
-    color: var(--wsf-darkest) !important;
+/* Global font styling */
+* {
+    font-family: 'Poppins', sans-serif !important;
 }
 
-/* --- AGGRESSIVE AVATAR STYLING --- */
-/* Target all possible avatar selectors */
-[data-testid="stChatMessageAvatarAssistant"],
-[data-testid="stAvatarIcon-assistant"],
-.st-emotion-cache-1c7y2kd,
-div[data-testid="stChatMessage"] div[class*="avatar"] {
-    background-color: var(--wsf-darkest) !important;
-    color: var(--wsf-white) !important;
+/* Main app background */
+.stApp {
+    background: linear-gradient(135deg, #F7FAFC 0%, #EDF2F7 100%) !important;
 }
 
-[data-testid="stChatMessageAvatarUser"],
-[data-testid="stAvatarIcon-user"],
-div[data-testid="stChatMessage"] div[class*="avatar"][data-testid*="user"] {
-    background-color: var(--wsf-mid-dark) !important;
-    color: var(--wsf-white) !important;
+/* Title styling */
+h1 {
+    color: var(--wsf-dark-teal) !important;
+    font-weight: 700 !important;
+    text-align: center !important;
+    padding: 20px 0 !important;
+    border-bottom: 3px solid var(--wsf-teal) !important;
+    margin-bottom: 30px !important;
+    background: linear-gradient(90deg, var(--wsf-dark-teal), var(--wsf-teal)) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
 }
 
-/* Target SVG icons inside avatars */
-[data-testid="stChatMessageAvatarAssistant"] svg,
-[data-testid="stAvatarIcon-assistant"] svg,
-[data-testid="stChatMessageAvatarUser"] svg,
-[data-testid="stAvatarIcon-user"] svg,
-.st-emotion-cache-1c7y2kd svg,
-div[data-testid="stChatMessage"] svg {
-    color: var(--wsf-white) !important;
-    fill: var(--wsf-white) !important;
-}
-
-/* --- CHAT MESSAGE BACKGROUNDS --- */
-/* Make ALL chat message containers white */
-[data-testid="stChatMessage"],
-div[data-testid="stChatMessage"],
-.st-emotion-cache-janbn0,
-.st-emotion-cache-1c7y2kd {
-    background-color: var(--wsf-white) !important;
-    color: var(--wsf-text-dark) !important;
-}
-
-/* Specific targeting for user messages */
-[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarUser"]),
-[data-testid="stChatMessage"]:has([data-testid="stAvatarIcon-user"]) {
-    background-color: var(--wsf-white) !important;
-    color: var(--wsf-text-dark) !important;
-}
-
-/* Specific targeting for assistant messages */
-[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarAssistant"]),
-[data-testid="stChatMessage"]:has([data-testid="stAvatarIcon-assistant"]) {
-    background-color: var(--wsf-white) !important;
-    color: var(--wsf-text-dark) !important;
-}
-
-/* --- CHAT INPUT STYLING --- */
-/* Make chat input white */
-[data-testid="stChatInput"],
-[data-testid="stChatInput"] > div,
-[data-testid="stChatInput"] textarea,
-.st-emotion-cache-1rtdyuf,
-div[data-testid="stChatInput"] div {
-    background-color: var(--wsf-white) !important;
-    border: 1px solid var(--wsf-light-grey) !important;
-}
-
-/* Chat input textarea specifically */
-[data-testid="stChatInput"] textarea {
-    background-color: var(--wsf-white) !important;
-    color: var(--wsf-text-dark) !important;
-}
-
-/* --- Button Styling --- */
+/* Button styling inspired by WSF */
 .stButton > button {
-    background-color: var(--wsf-mid-dark) !important;
-    color: var(--wsf-white) !important;
+    background: linear-gradient(135deg, var(--wsf-teal), var(--wsf-dark-teal)) !important;
+    color: white !important;
     border: none !important;
-    border-radius: 50px !important;
-    padding: 8px 20px !important;
-    width: 100% !important;
+    border-radius: 25px !important;
+    padding: 12px 24px !important;
+    font-weight: 500 !important;
+    font-size: 16px !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 12px rgba(0, 166, 147, 0.3) !important;
 }
 
 .stButton > button:hover {
-    background-color: var(--wsf-darkest) !important;
+    background: linear-gradient(135deg, var(--wsf-dark-teal), var(--wsf-teal)) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(0, 166, 147, 0.4) !important;
 }
 
-/* --- Additional fallback selectors --- */
-/* In case Streamlit uses different class names */
-.stChatMessage {
-    background-color: var(--wsf-white) !important;
+/* Enhanced chat messages */
+[data-testid="stChatMessage"] {
+    background: white !important;
+    border-radius: 16px !important;
+    padding: 20px !important;
+    margin: 12px 0 !important;
+    box-shadow: 0 4px 20px rgba(0, 166, 147, 0.08) !important;
+    border: 1px solid var(--wsf-light-teal) !important;
+    transition: all 0.2s ease !important;
 }
 
-.stAvatar {
-    background-color: var(--wsf-darkest) !important;
-    color: var(--wsf-white) !important;
+[data-testid="stChatMessage"]:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 25px rgba(0, 166, 147, 0.12) !important;
 }
 
-/* Force override any emotion cache classes that might be interfering */
-[class*="emotion-cache"] [data-testid*="Avatar"] {
-    background-color: var(--wsf-darkest) !important;
-    color: var(--wsf-white) !important;
+/* Chat message text */
+[data-testid="stChatMessage"] p {
+    color: var(--wsf-text) !important;
+    line-height: 1.6 !important;
+    font-size: 16px !important;
+    margin: 0 !important;
 }
 
-[class*="emotion-cache"] [data-testid*="Avatar"] svg {
-    color: var(--wsf-white) !important;
-    fill: var(--wsf-white) !important;
+/* Enhanced input area */
+[data-testid="stChatInput"] > div {
+    background: white !important;
+    border: 2px solid var(--wsf-teal) !important;
+    border-radius: 30px !important;
+    box-shadow: 0 6px 20px rgba(0, 166, 147, 0.1) !important;
+    padding: 4px !important;
+}
+
+[data-testid="stChatInput"] textarea {
+    background: white !important;
+    color: var(--wsf-text) !important;
+    border: none !important;
+    font-size: 16px !important;
+    padding: 16px 20px !important;
+}
+
+[data-testid="stChatInput"] textarea::placeholder {
+    color: #A0AEC0 !important;
+    font-style: italic !important;
+}
+
+/* Enhanced send button */
+[data-testid="stChatInput"] button {
+    background: linear-gradient(135deg, var(--wsf-teal), var(--wsf-dark-teal)) !important;
+    border: none !important;
+    border-radius: 50% !important;
+    width: 50px !important;
+    height: 50px !important;
+    margin: 6px !important;
+    transition: all 0.2s ease !important;
+}
+
+[data-testid="stChatInput"] button:hover {
+    transform: scale(1.1) rotate(5deg) !important;
+    box-shadow: 0 4px 15px rgba(0, 166, 147, 0.4) !important;
+}
+
+/* Loading spinner */
+.stSpinner > div {
+    border-color: var(--wsf-teal) transparent transparent transparent !important;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--wsf-light-gray);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(var(--wsf-teal), var(--wsf-dark-teal));
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(var(--wsf-dark-teal), var(--wsf-teal));
 }
