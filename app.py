@@ -61,23 +61,14 @@ def inject_custom_css():
         fill: #006B5B !important;
     }
     
-    /* Clean white message boxes with TRUE vertical centering for all text */
+    /* Clean white message boxes - SIMPLE approach */
 [data-testid="stChatMessage"] {
     background-color: white !important;
     border: 1px solid #E0EFEC !important;
     border-radius: 16px !important;
     box-shadow: none !important;
-    padding: 32px 40px !important;
+    padding: 24px 32px !important;
     margin: 8px 0 !important;
-    display: flex !important;
-    align-items: center !important;
-    min-height: 80px !important;
-}
-
-[data-testid="stChatMessage"] > div {
-    display: flex !important;
-    align-items: center !important;
-    width: 100% !important;
 }
 
 [data-testid="stChatMessage"] p {
@@ -87,8 +78,6 @@ def inject_custom_css():
     font-family: 'Poppins', sans-serif !important;
     margin: 0 !important;
     line-height: 1.5 !important;
-    text-align: left !important;
-    flex: 1 !important;
 }
     
     /* Fix input box - bigger with proper padding */
@@ -110,11 +99,12 @@ def inject_custom_css():
 }
     
     [data-testid="stChatInput"] button {
-        background-color: #00A693 !important;
-        color: white !important;
-        border-radius: 50% !important;
-        border: none !important;
-    }
+    background-color: #00A693 !important;
+    color: white !important;
+    border-radius: 50% !important;
+    border: none !important;
+    margin-right: 8px !important;
+}
     </style>
     """, unsafe_allow_html=True)
 
