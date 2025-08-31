@@ -26,6 +26,18 @@ def inject_custom_css():
         color: white !important;
         fill: white !important;
     }
+                /* Custom logo styling */
+.logo-title {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 15px !important;
+}
+
+.logo-title img {
+    height: 1.2em !important;
+    width: auto !important;
+}
     
     /* Assistant avatar - light teal with dark teal icon (like your screenshot) */
     div[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarAssistant"]) div[class*="st-emotion-cache"] {
@@ -39,36 +51,41 @@ def inject_custom_css():
         fill: #006B5B !important;
     }
     
-    /* Clean white message boxes */
-    [data-testid="stChatMessage"] {
-        background-color: white !important;
-        border: none !important;
-        box-shadow: none !important;
-        padding: 16px !important;
-        margin: 8px 0 !important;
-    }
+    /* Clean white message boxes with rounded borders and proper padding */
+[data-testid="stChatMessage"] {
+    background-color: white !important;
+    border: 1px solid #E0EFEC !important;
+    border-radius: 16px !important;
+    box-shadow: none !important;
+    padding: 20px 24px !important;
+    margin: 8px 0 !important;
+}
+
+[data-testid="stChatMessage"] p {
+    color: black !important;
+    background-color: white !important;
+    font-size: 16px !important;
+    margin: 0 !important;
+    line-height: 1.5 !important;
+    display: flex !important;
+    align-items: center !important;
+}
     
-    [data-testid="stChatMessage"] p {
-        color: black !important;
-        background-color: white !important;
-        font-size: 16px !important;
-        margin: 0 !important;
-    }
-    
-    /* Fix input box - simple and clean */
-    [data-testid="stChatInput"] > div {
-        background-color: white !important;
-        border: 2px solid #00A693 !important;
-        border-radius: 30px !important;
-        box-shadow: 0 4px 12px rgba(0, 166, 147, 0.15) !important;
-    }
-    
-    [data-testid="stChatInput"] textarea {
-        background-color: white !important;
-        color: #2D3748 !important;
-        border: none !important;
-        font-size: 16px !important;
-    }
+    /* Fix input box - minimal styling to prevent collapse */
+[data-testid="stChatInput"] > div {
+    background-color: white !important;
+    border: 2px solid #00A693 !important;
+    border-radius: 25px !important;
+    min-height: 48px !important;
+}
+
+[data-testid="stChatInput"] textarea {
+    background-color: white !important;
+    color: #2D3748 !important;
+    border: none !important;
+    font-size: 16px !important;
+    min-height: 20px !important;
+}
     
     [data-testid="stChatInput"] button {
         background-color: #00A693 !important;
@@ -136,7 +153,7 @@ def detect_intent_texts(text, session_id):
         return []
 
 # --- Streamlit User Interface ---
-st.title("Welcome to SoundHopper")
+st.markdown('<div class="logo-title"><img src="https://storage.googleapis.com/ferry_data/NewWSF/ferryimages/200px-Washington_State_Department_of_Transportation_Logo.png"><h1>Welcome to SoundHopper</h1></div>', unsafe_allow_html=True)
 
 # Inject CSS styling
 inject_custom_css()
