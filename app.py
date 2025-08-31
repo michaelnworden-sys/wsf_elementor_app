@@ -51,32 +51,36 @@ def inject_custom_css():
         fill: #006B5B !important;
     }
     
-    /* Clean white message boxes with rounded borders and proper padding */
+    /* Clean white message boxes with centered text and more padding */
 [data-testid="stChatMessage"] {
     background-color: white !important;
     border: 1px solid #E0EFEC !important;
     border-radius: 16px !important;
     box-shadow: none !important;
-    padding: 20px 24px !important;
+    padding: 24px 32px !important;
     margin: 8px 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    min-height: 60px !important;
 }
 
 [data-testid="stChatMessage"] p {
     color: black !important;
     background-color: white !important;
     font-size: 16px !important;
+    font-family: 'Poppins', sans-serif !important;
     margin: 0 !important;
     line-height: 1.5 !important;
-    display: flex !important;
-    align-items: center !important;
+    flex: 1 !important;
 }
     
-    /* Fix input box - minimal styling to prevent collapse */
+    /* Fix input box - bigger with proper padding */
 [data-testid="stChatInput"] > div {
     background-color: white !important;
     border: 2px solid #00A693 !important;
-    border-radius: 25px !important;
-    min-height: 48px !important;
+    border-radius: 30px !important;
+    min-height: 60px !important;
+    padding: 8px 16px !important;
 }
 
 [data-testid="stChatInput"] textarea {
@@ -84,7 +88,8 @@ def inject_custom_css():
     color: #2D3748 !important;
     border: none !important;
     font-size: 16px !important;
-    min-height: 20px !important;
+    min-height: 30px !important;
+    padding: 12px 16px !important;
 }
     
     [data-testid="stChatInput"] button {
@@ -155,7 +160,7 @@ def detect_intent_texts(text, session_id):
 # --- Streamlit User Interface ---
 st.markdown("""
 <div style="display: flex; align-items: center; justify-content: center; gap: 15px; color: #006B5B; font-family: 'Poppins', sans-serif; font-weight: 700; text-align: center; padding: 20px 0; border-bottom: 3px solid #00A693; margin-bottom: 30px;">
-    <img src="https://storage.googleapis.com/ferry_data/NewWSF/ferryimages/200px-Washington_State_Department_of_Transportation_Logo.png" style="height: 2em; width: auto;">
+    <img src="https://storage.googleapis.com/ferry_data/NewWSF/ferryimages/200px-Washington_State_Department_of_Transportation_Logo.png" style="height: 4em; width: auto;">
     <h1 style="margin: 0; color: #006B5B;">Welcome to SoundHopper</h1>
 </div>
 """, unsafe_allow_html=True)
