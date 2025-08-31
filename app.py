@@ -153,11 +153,16 @@ def detect_intent_texts(text, session_id):
         return []
 
 # --- Streamlit User Interface ---
-st.markdown('<div class="logo-title"><img src="https://storage.googleapis.com/ferry_data/NewWSF/ferryimages/200px-Washington_State_Department_of_Transportation_Logo.png"><h1>Welcome to SoundHopper</h1></div>', unsafe_allow_html=True)
+st.markdown("""
+<div style="display: flex; align-items: center; justify-content: center; gap: 15px; color: #006B5B; font-family: 'Poppins', sans-serif; font-weight: 700; text-align: center; padding: 20px 0; border-bottom: 3px solid #00A693; margin-bottom: 30px;">
+    <img src="https://storage.googleapis.com/ferry_data/NewWSF/ferryimages/200px-Washington_State_Department_of_Transportation_Logo.png" style="height: 2em; width: auto;">
+    <h1 style="margin: 0; color: #006B5B;">Welcome to SoundHopper</h1>
+</div>
+""", unsafe_allow_html=True)
 
 # Inject CSS styling
 inject_custom_css()
-local_css("assets/style.css")
+#local_css("assets/style.css")
 
 if "session_id" not in st.session_state:
     st.session_state.session_id = str(uuid.uuid4())
