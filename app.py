@@ -10,12 +10,12 @@ def inject_custom_css():
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
     
-    /* Apply Poppins font to everything */
+    /* Apply Poppins font */
     .main, .stApp, html, body, [class*="css"] {
         font-family: 'Poppins', sans-serif !important;
     }
     
-    /* User avatar - WSF green with white icon */
+    /* User avatar - teal green with white icon */
     div[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarUser"]) div[class*="st-emotion-cache"] {
         background-color: #00A693 !important;
         color: white !important;
@@ -27,62 +27,39 @@ def inject_custom_css():
         fill: white !important;
     }
     
-    /* Assistant avatar - teal blue with white icon */
+    /* Assistant avatar - light teal with dark teal icon (like your screenshot) */
     div[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarAssistant"]) div[class*="st-emotion-cache"] {
-        background-color: #0891B2 !important;
-        color: white !important;
+        background-color: #E0EFEC !important;
+        color: #006B5B !important;
         border-radius: 12px !important;
     }
     
     div[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarAssistant"]) svg {
-        color: white !important;
-        fill: white !important;
+        color: #006B5B !important;
+        fill: #006B5B !important;
     }
     
-    /* Fallback avatar styling */
-    div[data-testid="stChatMessage"] div[class*="st-emotion-cache"]:first-child {
-        background-color: #0891B2 !important;
-        color: white !important;
-    }
-    
-    div[data-testid="stChatMessage"] svg {
-        color: white !important;
-        fill: white !important;
-    }
-    
-    /* Clean white chat message boxes - NO borders or outlines */
+    /* Clean white message boxes */
     [data-testid="stChatMessage"] {
         background-color: white !important;
         border: none !important;
         box-shadow: none !important;
-        border-radius: 0px !important;
         padding: 16px !important;
         margin: 8px 0 !important;
     }
     
-    /* Remove ALL borders from message content */
-    [data-testid="stChatMessage"] > div:not(:first-child) {
-        background-color: white !important;
-        border: none !important;
-        outline: none !important;
-        box-shadow: none !important;
-    }
-    
-    /* Simple black text */
     [data-testid="stChatMessage"] p {
         color: black !important;
         background-color: white !important;
-        font-family: 'Poppins', sans-serif !important;
         font-size: 16px !important;
-        line-height: 1.5 !important;
         margin: 0 !important;
     }
     
-    /* Fix chat input styling */
+    /* Fix input box - simple and clean */
     [data-testid="stChatInput"] > div {
         background-color: white !important;
         border: 2px solid #00A693 !important;
-        border-radius: 25px !important;
+        border-radius: 30px !important;
         box-shadow: 0 4px 12px rgba(0, 166, 147, 0.15) !important;
     }
     
@@ -90,34 +67,14 @@ def inject_custom_css():
         background-color: white !important;
         color: #2D3748 !important;
         border: none !important;
-        font-family: 'Poppins', sans-serif !important;
         font-size: 16px !important;
     }
     
-    /* Fix send button */
     [data-testid="stChatInput"] button {
         background-color: #00A693 !important;
         color: white !important;
         border-radius: 50% !important;
         border: none !important;
-        width: 48px !important;
-        height: 48px !important;
-    }
-    
-    [data-testid="stChatInput"] button:hover {
-        background-color: #006B5B !important;
-        transform: scale(1.05) !important;
-    }
-    
-    /* Title styling */
-    h1 {
-        color: #006B5B !important;
-        font-family: 'Poppins', sans-serif !important;
-        font-weight: 700 !important;
-        text-align: center !important;
-        padding: 20px 0 !important;
-        border-bottom: 3px solid #00A693 !important;
-        margin-bottom: 30px !important;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -179,7 +136,7 @@ def detect_intent_texts(text, session_id):
         return []
 
 # --- Streamlit User Interface ---
-st.title("⛴️ Welcome to SoundHopper")
+st.title("Welcome to SoundHopper")
 
 # Inject CSS styling
 inject_custom_css()
