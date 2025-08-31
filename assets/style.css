@@ -11,20 +11,47 @@
 }
 
 /* --- General App & Title Styling --- */
-/* These are now mostly handled by config.toml, but can be kept for overrides */
 h1, #welcome-to-sound-hopper {
     color: var(--wsf-darkest);
 }
 
 /* --- Chat Message Styling --- */
-/* This rule for the user message is still very important */
+/* User message background */
 [data-testid="stChatMessage"]:has([data-testid="stAvatarIcon-user"]) {
-    background-color: var(--wsf-mid-dark);
-    color: var(--wsf-white);
+    background-color: var(--wsf-white) !important;
+    color: var(--wsf-text-dark) !important;
+}
+
+/* Assistant message background */
+[data-testid="stChatMessage"]:has([data-testid="stAvatarIcon-assistant"]) {
+    background-color: var(--wsf-white) !important;
+    color: var(--wsf-text-dark) !important;
+}
+
+/* --- AVATAR STYLING --- */
+/* User Avatar - Green background with white icon */
+[data-testid="stAvatarIcon-user"] {
+    background-color: var(--wsf-mid-dark) !important;
+    color: var(--wsf-white) !important;
+}
+
+[data-testid="stAvatarIcon-user"] svg {
+    color: var(--wsf-white) !important;
+    fill: var(--wsf-white) !important;
+}
+
+/* Assistant Avatar - Green background with white icon */
+[data-testid="stAvatarIcon-assistant"] {
+    background-color: var(--wsf-darkest) !important;
+    color: var(--wsf-white) !important;
+}
+
+[data-testid="stAvatarIcon-assistant"] svg {
+    color: var(--wsf-white) !important;
+    fill: var(--wsf-white) !important;
 }
 
 /* --- Chat Input Box & Button Styling --- */
-/* These styles for buttons cannot be done in config.toml */
 [data-testid="stChatInput"] {
     background-color: var(--wsf-white);
 }
