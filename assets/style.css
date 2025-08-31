@@ -1,27 +1,21 @@
-/* WSF-inspired styling with Poppins font */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
-/* WSF Color Palette */
 :root {
     --wsf-teal: #00A693;
     --wsf-dark-teal: #006B5B;
     --wsf-blue: #0891B2;
     --wsf-white: #FFFFFF;
     --wsf-text: #000000;
-    --wsf-light-gray: #F7FAFC;
 }
 
-/* Global font styling */
 * {
     font-family: 'Poppins', sans-serif !important;
 }
 
-/* Main app background */
 .stApp {
     background: linear-gradient(135deg, #F7FAFC 0%, #EDF2F7 100%) !important;
 }
 
-/* Beautiful title */
 h1 {
     color: var(--wsf-dark-teal) !important;
     font-weight: 700 !important;
@@ -31,7 +25,6 @@ h1 {
     margin-bottom: 30px !important;
 }
 
-/* Keep buttons looking great */
 .stButton > button {
     background: linear-gradient(135deg, var(--wsf-teal), var(--wsf-dark-teal)) !important;
     color: white !important;
@@ -50,42 +43,23 @@ h1 {
     box-shadow: 0 6px 20px rgba(0, 166, 147, 0.4) !important;
 }
 
-/* COMPLETELY CLEAN CHAT MESSAGES - ALL WHITE */
-[data-testid="stChatMessage"],
-[data-testid="stChatMessage"] > div,
-[data-testid="stChatMessage"] > div > div,
-[data-testid="stChatMessage"] * {
+[data-testid="stChatMessage"] {
     background-color: white !important;
     border: none !important;
     box-shadow: none !important;
-    outline: none !important;
     border-radius: 0px !important;
-}
-
-[data-testid="stChatMessage"] {
     padding: 16px !important;
     margin: 8px 0 !important;
 }
 
-/* NO HOVER EFFECTS ON CHAT MESSAGES */
-[data-testid="stChatMessage"]:hover {
-    transform: none !important;
-    box-shadow: none !important;
-}
-
-/* BLACK TEXT IN MESSAGES */
-[data-testid="stChatMessage"] p,
-[data-testid="stChatMessage"] div {
+[data-testid="stChatMessage"] p {
     color: black !important;
     background-color: white !important;
     line-height: 1.6 !important;
     font-size: 16px !important;
     margin: 0 !important;
-    border: none !important;
-    outline: none !important;
 }
 
-/* Keep the input area beautiful */
 [data-testid="stChatInput"] > div {
     background: white !important;
     border: 2px solid var(--wsf-teal) !important;
@@ -102,12 +76,6 @@ h1 {
     padding: 16px 20px !important;
 }
 
-[data-testid="stChatInput"] textarea::placeholder {
-    color: #A0AEC0 !important;
-    font-style: italic !important;
-}
-
-/* Keep send button beautiful */
 [data-testid="stChatInput"] button {
     background: linear-gradient(135deg, var(--wsf-teal), var(--wsf-dark-teal)) !important;
     border: none !important;
@@ -119,11 +87,6 @@ h1 {
 }
 
 [data-testid="stChatInput"] button:hover {
-    transform: scale(1.1) rotate(5deg) !important;
+    transform: scale(1.1) !important;
     box-shadow: 0 4px 15px rgba(0, 166, 147, 0.4) !important;
-}
-
-/* Loading spinner */
-.stSpinner > div {
-    border-color: var(--wsf-teal) transparent transparent transparent !important;
 }

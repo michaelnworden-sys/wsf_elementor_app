@@ -15,7 +15,7 @@ def inject_custom_css():
         font-family: 'Poppins', sans-serif !important;
     }
     
-    /* User avatar - WSF teal with white icon */
+    /* User avatar - WSF green with white icon */
     div[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarUser"]) div[class*="st-emotion-cache"] {
         background-color: #00A693 !important;
         color: white !important;
@@ -27,12 +27,11 @@ def inject_custom_css():
         fill: white !important;
     }
     
-    /* Assistant avatar - teal blue like the "Make reservations" button */
+    /* Assistant avatar - teal blue with white icon */
     div[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarAssistant"]) div[class*="st-emotion-cache"] {
         background-color: #0891B2 !important;
         color: white !important;
         border-radius: 12px !important;
-        border: none !important;
     }
     
     div[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarAssistant"]) svg {
@@ -40,7 +39,18 @@ def inject_custom_css():
         fill: white !important;
     }
     
-    /* COMPLETELY CLEAN WHITE CHAT MESSAGE BOXES */
+    /* Fallback avatar styling */
+    div[data-testid="stChatMessage"] div[class*="st-emotion-cache"]:first-child {
+        background-color: #0891B2 !important;
+        color: white !important;
+    }
+    
+    div[data-testid="stChatMessage"] svg {
+        color: white !important;
+        fill: white !important;
+    }
+    
+    /* Clean white chat message boxes - NO borders or outlines */
     [data-testid="stChatMessage"] {
         background-color: white !important;
         border: none !important;
@@ -50,41 +60,25 @@ def inject_custom_css():
         margin: 8px 0 !important;
     }
     
-    /* Remove ALL borders and outlines from message content */
-    [data-testid="stChatMessage"] > div,
-    [data-testid="stChatMessage"] > div > div,
-    [data-testid="stChatMessage"] * {
+    /* Remove ALL borders from message content */
+    [data-testid="stChatMessage"] > div:not(:first-child) {
         background-color: white !important;
         border: none !important;
         outline: none !important;
         box-shadow: none !important;
     }
     
-    [data-testid="stChatMessage"]:hover {
-        transform: none !important;
-        box-shadow: none !important;
-    }
-    
-    /* SIMPLE BLACK TEXT IN CHAT MESSAGES */
-    [data-testid="stChatMessage"] p,
-    [data-testid="stChatMessage"] div {
+    /* Simple black text */
+    [data-testid="stChatMessage"] p {
         color: black !important;
         background-color: white !important;
         font-family: 'Poppins', sans-serif !important;
         font-size: 16px !important;
         line-height: 1.5 !important;
         margin: 0 !important;
-        border: none !important;
-        outline: none !important;
     }
     
-    /* Clean up chat input styling - keep this nice */
-    [data-testid="stChatInput"] {
-        background-color: white !important;
-        border: none !important;
-        box-shadow: none !important;
-    }
-    
+    /* Fix chat input styling */
     [data-testid="stChatInput"] > div {
         background-color: white !important;
         border: 2px solid #00A693 !important;
@@ -96,25 +90,11 @@ def inject_custom_css():
         background-color: white !important;
         color: #2D3748 !important;
         border: none !important;
-        box-shadow: none !important;
-        outline: none !important;
         font-family: 'Poppins', sans-serif !important;
         font-size: 16px !important;
     }
     
-    [data-testid="stChatInput"] textarea:focus {
-        border: none !important;
-        box-shadow: 0 0 0 3px rgba(0, 166, 147, 0.2) !important;
-        outline: none !important;
-    }
-    
-    /* Remove any decorative elements */
-    [data-testid="stChatInput"] *::before,
-    [data-testid="stChatInput"] *::after {
-        display: none !important;
-    }
-    
-    /* Style the send button - keep this nice */
+    /* Fix send button */
     [data-testid="stChatInput"] button {
         background-color: #00A693 !important;
         color: white !important;
@@ -127,10 +107,9 @@ def inject_custom_css():
     [data-testid="stChatInput"] button:hover {
         background-color: #006B5B !important;
         transform: scale(1.05) !important;
-        transition: all 0.2s ease !important;
     }
     
-    /* Main title styling - keep this beautiful */
+    /* Title styling */
     h1 {
         color: #006B5B !important;
         font-family: 'Poppins', sans-serif !important;
@@ -139,11 +118,6 @@ def inject_custom_css():
         padding: 20px 0 !important;
         border-bottom: 3px solid #00A693 !important;
         margin-bottom: 30px !important;
-    }
-    
-    /* Spinner styling */
-    .stSpinner > div {
-        border-color: #00A693 !important;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -205,7 +179,7 @@ def detect_intent_texts(text, session_id):
         return []
 
 # --- Streamlit User Interface ---
-st.title("🚢 Welcome to SoundHopper")
+st.title("⛴️ Welcome to SoundHopper")
 
 # Inject CSS styling
 inject_custom_css()
