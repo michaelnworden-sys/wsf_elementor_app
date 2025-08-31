@@ -5,7 +5,7 @@
 :root {
     --wsf-teal: #00A693;
     --wsf-dark-teal: #006B5B;
-    --wsf-light-teal: #E6F7F5;
+    --wsf-blue: #0891B2;
     --wsf-white: #FFFFFF;
     --wsf-text: #000000;
     --wsf-light-gray: #F7FAFC;
@@ -50,12 +50,19 @@ h1 {
     box-shadow: 0 6px 20px rgba(0, 166, 147, 0.4) !important;
 }
 
-/* SIMPLE CLEAN CHAT MESSAGES - WHITE WITH BLACK TEXT */
-[data-testid="stChatMessage"] {
+/* COMPLETELY CLEAN CHAT MESSAGES - ALL WHITE */
+[data-testid="stChatMessage"],
+[data-testid="stChatMessage"] > div,
+[data-testid="stChatMessage"] > div > div,
+[data-testid="stChatMessage"] * {
     background-color: white !important;
     border: none !important;
     box-shadow: none !important;
+    outline: none !important;
     border-radius: 0px !important;
+}
+
+[data-testid="stChatMessage"] {
     padding: 16px !important;
     margin: 8px 0 !important;
 }
@@ -74,6 +81,8 @@ h1 {
     line-height: 1.6 !important;
     font-size: 16px !important;
     margin: 0 !important;
+    border: none !important;
+    outline: none !important;
 }
 
 /* Keep the input area beautiful */

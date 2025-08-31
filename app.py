@@ -27,30 +27,58 @@ def inject_custom_css():
         fill: white !important;
     }
     
-    /* Assistant avatar - light teal background with dark teal icon */
+    /* Assistant avatar - teal blue like the "Make reservations" button */
     div[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarAssistant"]) div[class*="st-emotion-cache"] {
-        background-color: #E6F7F5 !important;
-        color: #006B5B !important;
+        background-color: #0891B2 !important;
+        color: white !important;
         border-radius: 12px !important;
-        border: 2px solid #00A693 !important;
+        border: none !important;
     }
     
     div[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarAssistant"]) svg {
-        color: #006B5B !important;
-        fill: #006B5B !important;
+        color: white !important;
+        fill: white !important;
     }
     
-    /* Force chat message backgrounds to be clean white */
+    /* COMPLETELY CLEAN WHITE CHAT MESSAGE BOXES */
     [data-testid="stChatMessage"] {
         background-color: white !important;
-        border-radius: 16px !important;
+        border: none !important;
+        box-shadow: none !important;
+        border-radius: 0px !important;
         padding: 16px !important;
         margin: 8px 0 !important;
-        box-shadow: 0 2px 8px rgba(0, 166, 147, 0.1) !important;
-        border: 1px solid #F0F9F8 !important;
     }
     
-    /* Clean up chat input styling */
+    /* Remove ALL borders and outlines from message content */
+    [data-testid="stChatMessage"] > div,
+    [data-testid="stChatMessage"] > div > div,
+    [data-testid="stChatMessage"] * {
+        background-color: white !important;
+        border: none !important;
+        outline: none !important;
+        box-shadow: none !important;
+    }
+    
+    [data-testid="stChatMessage"]:hover {
+        transform: none !important;
+        box-shadow: none !important;
+    }
+    
+    /* SIMPLE BLACK TEXT IN CHAT MESSAGES */
+    [data-testid="stChatMessage"] p,
+    [data-testid="stChatMessage"] div {
+        color: black !important;
+        background-color: white !important;
+        font-family: 'Poppins', sans-serif !important;
+        font-size: 16px !important;
+        line-height: 1.5 !important;
+        margin: 0 !important;
+        border: none !important;
+        outline: none !important;
+    }
+    
+    /* Clean up chat input styling - keep this nice */
     [data-testid="stChatInput"] {
         background-color: white !important;
         border: none !important;
@@ -86,7 +114,7 @@ def inject_custom_css():
         display: none !important;
     }
     
-    /* Style the send button */
+    /* Style the send button - keep this nice */
     [data-testid="stChatInput"] button {
         background-color: #00A693 !important;
         color: white !important;
@@ -102,7 +130,7 @@ def inject_custom_css():
         transition: all 0.2s ease !important;
     }
     
-    /* Main title styling */
+    /* Main title styling - keep this beautiful */
     h1 {
         color: #006B5B !important;
         font-family: 'Poppins', sans-serif !important;
@@ -111,14 +139,6 @@ def inject_custom_css():
         padding: 20px 0 !important;
         border-bottom: 3px solid #00A693 !important;
         margin-bottom: 30px !important;
-    }
-    
-    /* Chat message text styling */
-    [data-testid="stChatMessage"] p {
-        font-family: 'Poppins', sans-serif !important;
-        color: #2D3748 !important;
-        line-height: 1.6 !important;
-        margin: 0 !important;
     }
     
     /* Spinner styling */
