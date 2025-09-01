@@ -151,7 +151,7 @@ div[data-testid="stChatMessageAvatarAssistant"] svg {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    margin: 6px 12px 6px 6px !important;
+    margin-right: 8px !important;
 }
     </style>
     """, unsafe_allow_html=True)
