@@ -79,7 +79,25 @@ font-family: 'Poppins', sans-serif !important;
 margin: 8px 0 !important;
 line-height: 1.6 !important;
 }
+/* Remove mysterious lines and borders inside message boxes */
+[data-testid="stChatMessage"] *::before,
+[data-testid="stChatMessage"] *::after {
+    display: none !important;
+}
 
+[data-testid="stChatMessage"] > div {
+    border: none !important;
+    background-color: white !important;
+}
+
+[data-testid="stChatMessage"] div {
+    border: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-top: none !important;
+    border-bottom: none !important;
+    background-color: white !important;
+}
 [data-testid="stChatMessage"] ul {
 margin: 12px 0 !important;
 padding-left: 20px !important;
