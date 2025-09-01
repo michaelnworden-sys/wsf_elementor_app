@@ -138,7 +138,7 @@ def inject_custom_css():
         padding: 12px 16px !important;
     }
     
-    [data-testid="stChatInput"] button {
+[data-testid="stChatInput"] button {
     background-color: #00A693 !important;
     color: white !important;
     border-radius: 50% !important;
@@ -146,8 +146,9 @@ def inject_custom_css():
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    margin: auto !important;
+    margin: 6px 12px 6px 6px !important;
 }
+
     </style>
     """, unsafe_allow_html=True)
 
