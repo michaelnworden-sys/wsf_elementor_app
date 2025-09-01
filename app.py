@@ -4,20 +4,28 @@ from google.oauth2 import service_account
 import uuid
 import base64
 
-# ---------- BRAND AVATARS (data-URL SVGs) ----------
-def make_avatar_data_url(bg="#00A693", fg="#FFFFFF", label="U"):
-    svg = f'''<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64">
-<defs><style>
-text {{ font-family: Arial, Helvetica, sans-serif; font-weight:700; }}
-</style></defs>
-<circle cx="32" cy="32" r="32" fill="{bg}"/>
-<text x="50%" y="50%" dy="10" text-anchor="middle" font-size="32" fill="{fg}">{label}</text>
-</svg>'''
-    data = base64.b64encode(svg.encode("utf-8")).decode("utf-8")
-    return f"data:image/svg+xml;base64,{data}"
+# ---------- BRAND AVATARS with Ferry and User SVGs ----------
+def svg_to_base64(svg_str):
+    return "data:image/svg+xml;base64," + base64.b64encode(svg_str.encode("utf-8")).decode("utf-8")
 
-USER_AVATAR      = make_avatar_data_url(bg="#00A693", fg="#FFFFFF", label="U")      # teal with white
-ASSISTANT_AVATAR = make_avatar_data_url(bg="#E0EFEC", fg="#006B5B", label="AI")    # light teal with dark teal
+# User avatar: teal background with white user icon
+user_svg = '''<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64">
+<circle cx="32" cy="32" r="32" fill="#00A693"/>
+<svg x="16" y="16" width="32" height="32" viewBox="0 0 640 640">
+<path fill="white" d="M320 312C386.3 312 440 258.3 440 192C440 125.7 386.3 72 320 72C253.7 72 200 125.7 200 192C200 258.3 253.7 312 320 312zM290.3 368C191.8 368 112 447.8 112 546.3C112 562.7 125.3 576 141.7 576L498.3 576C514.7 576 528 562.7 528 546.3C528 447.8 448.2 368 349.7 368L290.3 368z"/>
+</svg>
+</svg>'''
+
+# Assistant avatar: light teal background with dark green ferry icon
+assistant_svg = '''<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64">
+<circle cx="32" cy="32" r="32" fill="#E0EFEC"/>
+<svg x="16" y="16" width="32" height="32" viewBox="0 0 640 640">
+<path fill="#006B5B" d="M224 96C224 78.3 238.3 64 256 64L384 64C401.7 64 416 78.3 416 96L416 128L464 128C508.2 128 544 163.8 544 208L544 336L543.9 336C544 336.7 544 337.3 544 338C544 368.2 536.4 397.8 522 424.3L509.3 447.6L508.7 448.6C486.4 437.3 462.2 431.8 437.9 431.9C405.4 432.1 373 442.6 345.5 463.3C323.4 479.9 316.4 479.9 294.3 463.3C266.2 442.2 233 431.7 199.9 431.9C176.3 432.1 152.8 437.6 131.2 448.6L130.6 447.6L117.9 424.3C103.5 397.8 95.9 368.1 95.9 338C95.9 337.3 95.9 336.6 96 336L95.9 336L95.9 208C95.9 163.8 131.7 128 175.9 128L223.9 128L223.9 96zM160 320L480 320L480 208C480 199.2 472.8 192 464 192L176 192C167.2 192 160 199.2 160 208L160 320z"/>
+</svg>
+</svg>'''
+
+USER_AVATAR = svg_to_base64(user_svg)
+ASSISTANT_AVATAR = svg_to_base64(assistant_svg)
 
 # ---------- CSS (formatting only; no avatar hacks) ----------
 def inject_custom_css():
@@ -62,6 +70,7 @@ def inject_custom_css():
         border-radius:30px !important;
         min-height:60px !important;
         padding:8px 16px !important;
+        position: relative !important;
     }
     [data-testid="stChatInput"] textarea{
         background:#FFFFFF !important;
