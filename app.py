@@ -83,30 +83,26 @@ def inject_custom_css():
         border: none !important;
     }
 
-    /* User avatar - teal green with white icon */
-[data-testid="stChatMessage"] [data-testid="stChatMessageAvatarUser"] div,
-div[data-testid="stChatMessageAvatarUser"] > div {
+/* User avatar - teal green with white icon */
+div[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarUser"]) div[class*="st-emotion-cache"] {
     background-color: #00A693 !important;
     color: white !important;
     border-radius: 12px !important;
 }
 
-[data-testid="stChatMessage"] [data-testid="stChatMessageAvatarUser"] svg,
-div[data-testid="stChatMessageAvatarUser"] svg {
+div[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarUser"]) svg {
     color: white !important;
     fill: white !important;
 }
 
-/* Assistant avatar - light teal with dark teal icon */
-[data-testid="stChatMessage"] [data-testid="stChatMessageAvatarAssistant"] div,
-div[data-testid="stChatMessageAvatarAssistant"] > div {
+/* Assistant avatar - light teal with dark teal icon (like your screenshot) */
+div[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarAssistant"]) div[class*="st-emotion-cache"] {
     background-color: #E0EFEC !important;
     color: #006B5B !important;
     border-radius: 12px !important;
 }
 
-[data-testid="stChatMessage"] [data-testid="stChatMessageAvatarAssistant"] svg,
-div[data-testid="stChatMessageAvatarAssistant"] svg {
+div[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarAssistant"]) svg {
     color: #006B5B !important;
     fill: #006B5B !important;
 }
