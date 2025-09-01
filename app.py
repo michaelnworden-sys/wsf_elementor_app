@@ -52,7 +52,7 @@ def inject_custom_css():
         fill: #006B5B !important;
     }
     
-    /* Clean white message boxes with proper formatting */
+    /* Clean white message boxes - FORCE WHITE BACKGROUND EVERYWHERE */
     [data-testid="stChatMessage"] {
         background-color: white !important;
         border: 1px solid #E0EFEC !important;
@@ -62,10 +62,10 @@ def inject_custom_css():
         margin: 8px 0 !important;
     }
 
-    /* Remove all unwanted borders and lines inside message boxes */
-    [data-testid="stChatMessage"] *,
-    [data-testid="stChatMessage"] *::before,
-    [data-testid="stChatMessage"] *::after {
+    /* AGGRESSIVELY remove all colored backgrounds from message content */
+    [data-testid="stChatMessage"] *:not(svg):not(path) {
+        background-color: white !important;
+        background: white !important;
         border: none !important;
         border-left: none !important;
         border-right: none !important;
@@ -75,50 +75,72 @@ def inject_custom_css():
         background-image: none !important;
     }
 
-    [data-testid="stChatMessage"] > div,
-    [data-testid="stChatMessage"] div {
-        border: none !important;
+    [data-testid="stChatMessage"] *::before,
+    [data-testid="stChatMessage"] *::after {
+        display: none !important;
+        background: none !important;
         background-color: transparent !important;
     }
 
-    /* Text formatting with proper line breaks */
+    /* Force all divs inside messages to be white */
+    [data-testid="stChatMessage"] > div,
+    [data-testid="stChatMessage"] div:not([data-testid*="Avatar"]) {
+        background-color: white !important;
+        background: white !important;
+    }
+
+    /* Text formatting with proper line breaks - FORCE WHITE */
     [data-testid="stChatMessage"] p {
         color: black !important;
-        background-color: transparent !important;
+        background-color: white !important;
+        background: white !important;
         font-size: 16px !important;
         font-family: 'Poppins', sans-serif !important;
         margin: 12px 0 !important;
         line-height: 1.6 !important;
-        white-space: pre-wrap !important; /* This preserves line breaks */
+        white-space: pre-wrap !important;
     }
 
-    /* Bullet point lists */
+    /* Bullet point lists - FORCE WHITE */
     [data-testid="stChatMessage"] ul {
         margin: 12px 0 !important;
         padding-left: 20px !important;
         list-style-type: disc !important;
-        background-color: transparent !important;
+        background-color: white !important;
+        background: white !important;
     }
 
     [data-testid="stChatMessage"] li {
         margin: 6px 0 !important;
         line-height: 1.5 !important;
         color: black !important;
-        background-color: transparent !important;
+        background-color: white !important;
+        background: white !important;
         list-style-type: disc !important;
         display: list-item !important;
     }
 
-    /* Ordered lists */
+    /* Ordered lists - FORCE WHITE */
     [data-testid="stChatMessage"] ol {
         margin: 12px 0 !important;
         padding-left: 20px !important;
         list-style-type: decimal !important;
-        background-color: transparent !important;
+        background-color: white !important;
+        background: white !important;
     }
 
     [data-testid="stChatMessage"] ol li {
         list-style-type: decimal !important;
+        background-color: white !important;
+        background: white !important;
+    }
+
+    /* Force white background on any markdown content */
+    [data-testid="stChatMessage"] [data-testid="stMarkdownContainer"],
+    [data-testid="stChatMessage"] .stMarkdown,
+    [data-testid="stChatMessage"] .element-container {
+        background-color: white !important;
+        background: white !important;
     }
 
     /* Input box styling */
@@ -151,6 +173,7 @@ def inject_custom_css():
     }
     </style>
     """, unsafe_allow_html=True)
+
 
 # --- FUNCTION TO LOAD LOCAL CSS ---
 def local_css(file_name):
@@ -242,7 +265,7 @@ if user_input := st.chat_input("Ask your question about Washington State Ferries
             if m["type"] == "text":
                 st.session_state.messages.append({"role": "assistant", "content": m["content"]})
                 with st.chat_message("assistant"):
-                    st.markdown(m["content"])
+                    st.markdown(m["content"].replace('\n', '  \n'))
             elif m["type"] == "payload":
                 payload = m["content"]
                 with st.chat_message("assistant"):
