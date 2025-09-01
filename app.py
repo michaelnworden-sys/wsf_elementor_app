@@ -139,15 +139,15 @@ def inject_custom_css():
     }
     
     [data-testid="stChatInput"] button {
-        background-color: #00A693 !important;
-        color: white !important;
-        border-radius: 50% !important;
-        border: none !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        margin: auto !important;
-    }
+    background-color: #00A693 !important;
+    color: white !important;
+    border-radius: 50% !important;
+    border: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: auto !important;
+}
     </style>
     """, unsafe_allow_html=True)
 
