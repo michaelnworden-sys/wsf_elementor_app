@@ -72,12 +72,22 @@ def inject_custom_css():
 }
 
 [data-testid="stChatMessage"] p {
-    color: black !important;
-    background-color: white !important;
-    font-size: 16px !important;
-    font-family: 'Poppins', sans-serif !important;
-    margin: 0 !important;
-    line-height: 1.5 !important;
+color: black !important;
+background-color: white !important;
+font-size: 16px !important;
+font-family: 'Poppins', sans-serif !important;
+margin: 8px 0 !important;
+line-height: 1.6 !important;
+}
+
+[data-testid="stChatMessage"] ul {
+margin: 12px 0 !important;
+padding-left: 20px !important;
+}
+
+[data-testid="stChatMessage"] li {
+margin: 4px 0 !important;
+line-height: 1.5 !important;
 }
     
     /* Fix input box - bigger with proper padding */
