@@ -15,8 +15,76 @@ def inject_custom_css():
         font-family: 'Poppins', sans-serif !important;
     }
     
+    /* NUCLEAR OPTION - Override everything inside chat messages */
+    [data-testid="stChatMessage"] {
+        background-color: white !important;
+        border: 1px solid #E0EFEC !important;
+        border-radius: 16px !important;
+        box-shadow: none !important;
+        padding: 24px 32px !important;
+        margin: 8px 0 !important;
+    }
+
+    /* Kill ALL backgrounds inside chat messages except avatars */
+    [data-testid="stChatMessage"] > div > div:not([data-testid*="stChatMessageAvatar"]) {
+        background: white !important;
+        background-color: white !important;
+        background-image: none !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    /* Target the actual content container that holds the text */
+    [data-testid="stChatMessage"] > div > div:last-child,
+    [data-testid="stChatMessage"] > div > div:last-child > div,
+    [data-testid="stChatMessage"] > div > div:last-child > div > div {
+        background: white !important;
+        background-color: white !important;
+        background-image: none !important;
+        border: none !important;
+        border-radius: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    /* Force all text elements to have no background */
+    [data-testid="stChatMessage"] p,
+    [data-testid="stChatMessage"] div p,
+    [data-testid="stChatMessage"] span,
+    [data-testid="stChatMessage"] div span {
+        background: white !important;
+        background-color: white !important;
+        color: black !important;
+        font-size: 16px !important;
+        font-family: 'Poppins', sans-serif !important;
+        line-height: 1.6 !important;
+        white-space: pre-wrap !important;
+        margin: 8px 0 !important;
+        padding: 0 !important;
+        border: none !important;
+    }
+
+    /* Lists */
+    [data-testid="stChatMessage"] ul,
+    [data-testid="stChatMessage"] ol {
+        background: white !important;
+        background-color: white !important;
+        margin: 12px 0 !important;
+        padding-left: 20px !important;
+    }
+
+    [data-testid="stChatMessage"] li {
+        background: white !important;
+        background-color: white !important;
+        color: black !important;
+        margin: 4px 0 !important;
+        padding: 0 !important;
+        border: none !important;
+    }
+
     /* User avatar - teal green with white icon */
-    div[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarUser"]) div[class*="st-emotion-cache"] {
+    div[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarUser"]) [data-testid="stChatMessageAvatarUser"] > div {
         background-color: #00A693 !important;
         color: white !important;
         border-radius: 12px !important;
@@ -25,6 +93,18 @@ def inject_custom_css():
     div[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarUser"]) svg {
         color: white !important;
         fill: white !important;
+    }
+
+    /* Assistant avatar - light teal with dark teal icon */
+    div[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarAssistant"]) [data-testid="stChatMessageAvatarAssistant"] > div {
+        background-color: #E0EFEC !important;
+        color: #006B5B !important;
+        border-radius: 12px !important;
+    }
+    
+    div[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarAssistant"]) svg {
+        color: #006B5B !important;
+        fill: #006B5B !important;
     }
 
     /* Custom logo styling */
@@ -38,109 +118,6 @@ def inject_custom_css():
     .logo-title img {
         height: 1.2em !important;
         width: auto !important;
-    }
-
-    /* Assistant avatar - light teal with dark teal icon */
-    div[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarAssistant"]) div[class*="st-emotion-cache"] {
-        background-color: #E0EFEC !important;
-        color: #006B5B !important;
-        border-radius: 12px !important;
-    }
-    
-    div[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarAssistant"]) svg {
-        color: #006B5B !important;
-        fill: #006B5B !important;
-    }
-    
-    /* Clean white message boxes - FORCE WHITE BACKGROUND EVERYWHERE */
-    [data-testid="stChatMessage"] {
-        background-color: white !important;
-        border: 1px solid #E0EFEC !important;
-        border-radius: 16px !important;
-        box-shadow: none !important;
-        padding: 24px 32px !important;
-        margin: 8px 0 !important;
-    }
-
-    /* AGGRESSIVELY remove all colored backgrounds from message content */
-    [data-testid="stChatMessage"] *:not(svg):not(path) {
-        background-color: white !important;
-        background: white !important;
-        border: none !important;
-        border-left: none !important;
-        border-right: none !important;
-        border-top: none !important;
-        border-bottom: none !important;
-        box-shadow: none !important;
-        background-image: none !important;
-    }
-
-    [data-testid="stChatMessage"] *::before,
-    [data-testid="stChatMessage"] *::after {
-        display: none !important;
-        background: none !important;
-        background-color: transparent !important;
-    }
-
-    /* Force all divs inside messages to be white */
-    [data-testid="stChatMessage"] > div,
-    [data-testid="stChatMessage"] div:not([data-testid*="Avatar"]) {
-        background-color: white !important;
-        background: white !important;
-    }
-
-    /* Text formatting with proper line breaks - FORCE WHITE */
-    [data-testid="stChatMessage"] p {
-        color: black !important;
-        background-color: white !important;
-        background: white !important;
-        font-size: 16px !important;
-        font-family: 'Poppins', sans-serif !important;
-        margin: 12px 0 !important;
-        line-height: 1.6 !important;
-        white-space: pre-wrap !important;
-    }
-
-    /* Bullet point lists - FORCE WHITE */
-    [data-testid="stChatMessage"] ul {
-        margin: 12px 0 !important;
-        padding-left: 20px !important;
-        list-style-type: disc !important;
-        background-color: white !important;
-        background: white !important;
-    }
-
-    [data-testid="stChatMessage"] li {
-        margin: 6px 0 !important;
-        line-height: 1.5 !important;
-        color: black !important;
-        background-color: white !important;
-        background: white !important;
-        list-style-type: disc !important;
-        display: list-item !important;
-    }
-
-    /* Ordered lists - FORCE WHITE */
-    [data-testid="stChatMessage"] ol {
-        margin: 12px 0 !important;
-        padding-left: 20px !important;
-        list-style-type: decimal !important;
-        background-color: white !important;
-        background: white !important;
-    }
-
-    [data-testid="stChatMessage"] ol li {
-        list-style-type: decimal !important;
-        background-color: white !important;
-        background: white !important;
-    }
-
-    /* Force white background on any markdown content */
-    [data-testid="stChatMessage"] [data-testid="stMarkdownContainer"],
-    [data-testid="stChatMessage"] .stMarkdown,
-    [data-testid="stChatMessage"] .element-container {
-        background-color: white !important;
-        background: white !important;
     }
 
     /* Input box styling */
@@ -173,7 +150,6 @@ def inject_custom_css():
     }
     </style>
     """, unsafe_allow_html=True)
-
 
 # --- FUNCTION TO LOAD LOCAL CSS ---
 def local_css(file_name):
@@ -265,7 +241,7 @@ if user_input := st.chat_input("Ask your question about Washington State Ferries
             if m["type"] == "text":
                 st.session_state.messages.append({"role": "assistant", "content": m["content"]})
                 with st.chat_message("assistant"):
-                    st.markdown(m["content"].replace('\n', '  \n'))
+                    st.markdown(m["content"])
             elif m["type"] == "payload":
                 payload = m["content"]
                 with st.chat_message("assistant"):
