@@ -15,7 +15,7 @@ def inject_custom_css():
         font-family: 'Poppins', sans-serif !important;
     }
     
-    /* Chat message wrapper */
+    /* NUCLEAR OPTION - Override everything inside chat messages */
     [data-testid="stChatMessage"] {
         background-color: white !important;
         border: 1px solid #E0EFEC !important;
@@ -25,18 +25,36 @@ def inject_custom_css():
         margin: 8px 0 !important;
     }
 
-    /* Reset only the content area inside messages (keep formatting) */
-    [data-testid="stChatMessageContent"] {
+    /* Kill ALL backgrounds inside chat messages EXCEPT avatars */
+    [data-testid="stChatMessage"] > div > div:not([data-testid*="stChatMessageAvatar"]) {
         background: white !important;
+        background-color: white !important;
+        background-image: none !important;
         border: none !important;
         padding: 0 !important;
         margin: 0 !important;
     }
 
-    /* Text styling */
-    [data-testid="stChatMessage"] p,
-    [data-testid="stChatMessage"] span {
+    /* Target the actual content container that holds the text */
+    [data-testid="stChatMessage"] > div > div:last-child,
+    [data-testid="stChatMessage"] > div > div:last-child > div,
+    [data-testid="stChatMessage"] > div > div:last-child > div > div {
         background: white !important;
+        background-color: white !important;
+        background-image: none !important;
+        border: none !important;
+        border-radius: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    /* Force all text elements to have no background */
+    [data-testid="stChatMessage"] p,
+    [data-testid="stChatMessage"] div p,
+    [data-testid="stChatMessage"] span,
+    [data-testid="stChatMessage"] div span {
+        background: white !important;
+        background-color: white !important;
         color: black !important;
         font-size: 16px !important;
         font-family: 'Poppins', sans-serif !important;
@@ -50,34 +68,40 @@ def inject_custom_css():
     /* Lists */
     [data-testid="stChatMessage"] ul,
     [data-testid="stChatMessage"] ol {
+        background: white !important;
+        background-color: white !important;
         margin: 12px 0 !important;
         padding-left: 20px !important;
     }
 
     [data-testid="stChatMessage"] li {
+        background: white !important;
+        background-color: white !important;
         color: black !important;
         margin: 4px 0 !important;
         padding: 0 !important;
         border: none !important;
     }
 
-    /* User avatar - teal green with white icon */
+    /* ✅ User avatar - teal green with white icon */
     [data-testid="stChatMessageAvatarUser"] > div {
         background-color: #00A693 !important;
         color: white !important;
         border-radius: 12px !important;
     }
+    
     [data-testid="stChatMessageAvatarUser"] svg {
         color: white !important;
         fill: white !important;
     }
 
-    /* Assistant avatar - light teal with dark teal icon */
+    /* ✅ Assistant avatar - light teal with dark teal icon */
     [data-testid="stChatMessageAvatarAssistant"] > div {
         background-color: #E0EFEC !important;
         color: #006B5B !important;
         border-radius: 12px !important;
     }
+    
     [data-testid="stChatMessageAvatarAssistant"] svg {
         color: #006B5B !important;
         fill: #006B5B !important;
@@ -90,6 +114,7 @@ def inject_custom_css():
         justify-content: center !important;
         gap: 15px !important;
     }
+
     .logo-title img {
         height: 1.2em !important;
         width: auto !important;
@@ -103,6 +128,7 @@ def inject_custom_css():
         min-height: 60px !important;
         padding: 8px 16px !important;
     }
+
     [data-testid="stChatInput"] textarea {
         background-color: white !important;
         color: #2D3748 !important;
@@ -111,6 +137,7 @@ def inject_custom_css():
         min-height: 30px !important;
         padding: 12px 16px !important;
     }
+    
     [data-testid="stChatInput"] button {
         background-color: #00A693 !important;
         color: white !important;
