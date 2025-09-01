@@ -143,10 +143,7 @@ def inject_custom_css():
     color: white !important;
     border-radius: 50% !important;
     border: none !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    margin: 6px 12px 6px 6px !important;
+    margin-right: 8px !important;
 }
 
     </style>
