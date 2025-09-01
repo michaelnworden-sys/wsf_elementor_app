@@ -84,25 +84,25 @@ def inject_custom_css():
     }
 
     /* User avatar - teal green with white icon */
-    div[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarUser"]) [data-testid="stChatMessageAvatarUser"] > div {
+    [data-testid="stChatMessageAvatarUser"] > div {
         background-color: #00A693 !important;
         color: white !important;
         border-radius: 12px !important;
     }
     
-    div[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarUser"]) svg {
+    [data-testid="stChatMessageAvatarUser"] svg {
         color: white !important;
         fill: white !important;
     }
 
     /* Assistant avatar - light teal with dark teal icon */
-    div[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarAssistant"]) [data-testid="stChatMessageAvatarAssistant"] > div {
+    [data-testid="stChatMessageAvatarAssistant"] > div {
         background-color: #E0EFEC !important;
         color: #006B5B !important;
         border-radius: 12px !important;
     }
     
-    div[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarAssistant"]) svg {
+    [data-testid="stChatMessageAvatarAssistant"] svg {
         color: #006B5B !important;
         fill: #006B5B !important;
     }
