@@ -4,7 +4,7 @@ from google.oauth2 import service_account
 import uuid
 import json
 
-# Add this CSS injection function
+# --- CSS Injection Function ---
 def inject_custom_css():
     st.markdown("""
     <style>
@@ -15,7 +15,7 @@ def inject_custom_css():
         font-family: 'Poppins', sans-serif !important;
     }
     
-    /* NUCLEAR OPTION - Override everything inside chat messages */
+    /* Chat message wrapper */
     [data-testid="stChatMessage"] {
         background-color: white !important;
         border: 1px solid #E0EFEC !important;
@@ -25,36 +25,18 @@ def inject_custom_css():
         margin: 8px 0 !important;
     }
 
-    /* Kill ALL backgrounds inside chat messages except avatars */
-    [data-testid="stChatMessage"] > div > div:not([data-testid*="stChatMessageAvatar"]) {
+    /* Reset only the content area inside messages (keep formatting) */
+    [data-testid="stChatMessageContent"] {
         background: white !important;
-        background-color: white !important;
-        background-image: none !important;
         border: none !important;
         padding: 0 !important;
         margin: 0 !important;
     }
 
-    /* Target the actual content container that holds the text */
-    [data-testid="stChatMessage"] > div > div:last-child,
-    [data-testid="stChatMessage"] > div > div:last-child > div,
-    [data-testid="stChatMessage"] > div > div:last-child > div > div {
-        background: white !important;
-        background-color: white !important;
-        background-image: none !important;
-        border: none !important;
-        border-radius: 0 !important;
-        padding: 0 !important;
-        margin: 0 !important;
-    }
-
-    /* Force all text elements to have no background */
+    /* Text styling */
     [data-testid="stChatMessage"] p,
-    [data-testid="stChatMessage"] div p,
-    [data-testid="stChatMessage"] span,
-    [data-testid="stChatMessage"] div span {
+    [data-testid="stChatMessage"] span {
         background: white !important;
-        background-color: white !important;
         color: black !important;
         font-size: 16px !important;
         font-family: 'Poppins', sans-serif !important;
@@ -68,28 +50,23 @@ def inject_custom_css():
     /* Lists */
     [data-testid="stChatMessage"] ul,
     [data-testid="stChatMessage"] ol {
-        background: white !important;
-        background-color: white !important;
         margin: 12px 0 !important;
         padding-left: 20px !important;
     }
 
     [data-testid="stChatMessage"] li {
-        background: white !important;
-        background-color: white !important;
         color: black !important;
         margin: 4px 0 !important;
         padding: 0 !important;
         border: none !important;
     }
 
-/* User avatar - teal green with white icon */
+    /* User avatar - teal green with white icon */
     [data-testid="stChatMessageAvatarUser"] > div {
         background-color: #00A693 !important;
         color: white !important;
         border-radius: 12px !important;
     }
-    
     [data-testid="stChatMessageAvatarUser"] svg {
         color: white !important;
         fill: white !important;
@@ -101,12 +78,10 @@ def inject_custom_css():
         color: #006B5B !important;
         border-radius: 12px !important;
     }
-    
     [data-testid="stChatMessageAvatarAssistant"] svg {
         color: #006B5B !important;
         fill: #006B5B !important;
     }
-
 
     /* Custom logo styling */
     .logo-title {
@@ -115,7 +90,6 @@ def inject_custom_css():
         justify-content: center !important;
         gap: 15px !important;
     }
-
     .logo-title img {
         height: 1.2em !important;
         width: auto !important;
@@ -129,7 +103,6 @@ def inject_custom_css():
         min-height: 60px !important;
         padding: 8px 16px !important;
     }
-
     [data-testid="stChatInput"] textarea {
         background-color: white !important;
         color: #2D3748 !important;
@@ -138,17 +111,16 @@ def inject_custom_css():
         min-height: 30px !important;
         padding: 12px 16px !important;
     }
-    
-[data-testid="stChatInput"] button {
-    background-color: #00A693 !important;
-    color: white !important;
-    border-radius: 50% !important;
-    border: none !important;
-    position: absolute !important;
-    right: 10px !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
-}
+    [data-testid="stChatInput"] button {
+        background-color: #00A693 !important;
+        color: white !important;
+        border-radius: 50% !important;
+        border: none !important;
+        position: absolute !important;
+        right: 10px !important;
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -199,7 +171,7 @@ def detect_intent_texts(text, session_id):
                 elif hasattr(msg, 'payload') and msg.payload:
                     payload = dict(msg.payload)
                     messages.append({"type": "payload", "content": payload})
-            except Exception as msg_error:
+            except Exception:
                 continue
 
         return messages
@@ -218,7 +190,7 @@ st.markdown("""
 
 # Inject CSS styling
 inject_custom_css()
-#local_css("assets/style.css")
+# local_css("assets/style.css")
 
 if "session_id" not in st.session_state:
     st.session_state.session_id = str(uuid.uuid4())
