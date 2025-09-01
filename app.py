@@ -145,13 +145,13 @@ div[data-testid="stChatMessageAvatarAssistant"] svg {
     
 [data-testid="stChatInput"] button {
     background-color: #00A693 !important;
-    color: white !important;
+    color: white !important;gita dd
     border-radius: 50% !important;
     border: none !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    margin: 6px 12px 6px 6px !important;
+    margin: 4px 12px 8px 6px !important;
 }
     </style>
     """, unsafe_allow_html=True)
