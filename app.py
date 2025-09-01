@@ -84,28 +84,33 @@ def inject_custom_css():
     }
 
     /* User avatar - teal green with white icon */
-    [data-testid="stChatMessageAvatarUser"] > div {
-        background-color: #00A693 !important;
-        color: white !important;
-        border-radius: 12px !important;
-    }
-    
-    [data-testid="stChatMessageAvatarUser"] svg {
-        color: white !important;
-        fill: white !important;
-    }
+[data-testid="stChatMessage"] [data-testid="stChatMessageAvatarUser"] div,
+div[data-testid="stChatMessageAvatarUser"] > div {
+    background-color: #00A693 !important;
+    color: white !important;
+    border-radius: 12px !important;
+}
 
-    /* Assistant avatar - light teal with dark teal icon */
-    [data-testid="stChatMessageAvatarAssistant"] > div {
-        background-color: #E0EFEC !important;
-        color: #006B5B !important;
-        border-radius: 12px !important;
-    }
-    
-    [data-testid="stChatMessageAvatarAssistant"] svg {
-        color: #006B5B !important;
-        fill: #006B5B !important;
-    }
+[data-testid="stChatMessage"] [data-testid="stChatMessageAvatarUser"] svg,
+div[data-testid="stChatMessageAvatarUser"] svg {
+    color: white !important;
+    fill: white !important;
+}
+
+/* Assistant avatar - light teal with dark teal icon */
+[data-testid="stChatMessage"] [data-testid="stChatMessageAvatarAssistant"] div,
+div[data-testid="stChatMessageAvatarAssistant"] > div {
+    background-color: #E0EFEC !important;
+    color: #006B5B !important;
+    border-radius: 12px !important;
+}
+
+[data-testid="stChatMessage"] [data-testid="stChatMessageAvatarAssistant"] svg,
+div[data-testid="stChatMessageAvatarAssistant"] svg {
+    color: #006B5B !important;
+    fill: #006B5B !important;
+}
+
 
     /* Custom logo styling */
     .logo-title {
@@ -143,9 +148,11 @@ def inject_custom_css():
     color: white !important;
     border-radius: 50% !important;
     border: none !important;
-    margin-right: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 6px 12px 6px 6px !important;
 }
-
     </style>
     """, unsafe_allow_html=True)
 
