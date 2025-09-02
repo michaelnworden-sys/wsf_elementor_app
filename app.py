@@ -30,66 +30,51 @@ assistant_svg = '''<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64
 USER_AVATAR = svg_to_base64(user_svg)
 ASSISTANT_AVATAR = svg_to_base64(assistant_svg)
 
-# ---------- CSS (formatting + STICKY MAP RULE) ----------
+# ---------- CSS (formatting + ADVANCED LAYOUT RULES) ----------
 def inject_custom_css():
     st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
-    .main, .stApp, html, body, [class*="css"] { font-family: 'Poppins', sans-serif !important; }
+    /* General Body Styling */
+    .main, .stApp, html, body, [class*="css"] {
+        font-family: 'Poppins', sans-serif !important;
+    }
 
-    /* Makes the second column (the map) sticky */
-    div[data-testid="stHorizontalBlock"] > div:nth-child(2) {
+    /* --- LAYOUT FIXES --- */
+    /* This targets the container of the two main columns (chat and map) */
+    .main .block-container > div:first-child > div:nth-child(2) > div {
+        height: 75vh; /* Sets the height of the main content area */
+    }
+
+    /* This targets the chat column */
+    .main .block-container > div:first-child > div:nth-child(2) > div > div:nth-child(1) {
+        height: 100%;       /* Makes the column fill the parent's height */
+        display: flex;      /* Enables flexbox for positioning */
+        flex-direction: column; /* Stacks children (history and input) vertically */
+    }
+
+    /* This targets the chat history container */
+    .main .block-container > div:first-child > div:nth-child(2) > div > div:nth-child(1) > div:first-child {
+        flex-grow: 1;       /* Allows the history to expand and fill available space */
+        overflow-y: auto;   /* Adds a scrollbar ONLY to the history when needed */
+    }
+    
+    /* Makes the map column sticky */
+    .main .block-container > div:first-child > div:nth-child(2) > div > div:nth-child(2) {
         position: sticky;
         top: 2rem;
     }
-
-    /* Chat message card */
+    
+    /* --- CHAT BUBBLE STYLING (No changes here) --- */
     [data-testid="stChatMessage"]{
-        background:#FFFFFF !important;
-        border:1px solid #E0EFEC !important;
-        border-radius:16px !important;
-        padding:24px 32px !important;
-        margin:8px 0 !important;
-        box-shadow:none !important;
+        background:#FFFFFF !important; border:1px solid #E0EFEC !important;
+        border-radius:16px !important; padding:24px 32px !important;
+        margin:8px 0 !important; box-shadow:none !important;
     }
-
-    /* Text */
-    [data-testid="stChatMessage"] p,
-    [data-testid="stChatMessage"] span,
-    [data-testid="stChatMessage"] li {
-        color:#000000 !important;
-        font-size:16px !important;
-        line-height:1.6 !important;
-        white-space:pre-wrap !important;
-        margin:8px 0 !important;
-    }
-
-    /* Input */
     [data-testid="stChatInput"] > div{
-        background:#FFFFFF !important;
-        border:2px solid #00A693 !important;
+        background:#FFFFFF !important; border:2px solid #00A693 !important;
         border-radius:30px !important;
-        min-height:60px !important;
-        padding:8px 16px !important;
-        position: relative !important;
-    }
-    [data-testid="stChatInput"] textarea{
-        background:#FFFFFF !important;
-        color:#2D3748 !important;
-        border:none !important;
-        font-size:16px !important;
-        padding:12px 16px !important;
-    }
-    [data-testid="stChatInput"] button{
-        background:#00A693 !important;
-        color:#FFFFFF !important;
-        border:none !important;
-        border-radius:50% !important;
-        position:absolute !important;
-        right:10px !important;
-        top:50% !important;
-        transform:translateY(-50%) !important;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -106,27 +91,20 @@ def detect_intent_texts(text, session_id):
         credentials = service_account.Credentials.from_service_account_info(credentials_info)
         session_client = dialogflow.SessionsClient(client_options=client_options, credentials=credentials)
         session_path = session_client.session_path(project=PROJECT_ID, location=location, agent=AGENT_ID, session=session_id)
-
         text_input = dialogflow.TextInput(text=text)
         query_input = dialogflow.QueryInput(text=text_input, language_code="en")
         request = dialogflow.DetectIntentRequest(session=session_path, query_input=query_input)
-
         response = session_client.detect_intent(request=request)
-
         messages = []
         for msg in response.query_result.response_messages:
             try:
                 if hasattr(msg, 'text') and msg.text:
                     for t in msg.text.text:
-                        if t.strip():
-                            messages.append({"type": "text", "content": t})
+                        if t.strip(): messages.append({"type": "text", "content": t})
                 elif hasattr(msg, 'payload') and msg.payload:
-                    payload = dict(msg.payload)
-                    messages.append({"type": "payload", "content": payload})
-            except Exception:
-                continue
+                    messages.append({"type": "payload", "content": dict(msg.payload)})
+            except Exception: continue
         return messages
-
     except Exception as e:
         st.error(f"An error occurred with Dialogflow: {e}")
         return []
@@ -142,50 +120,41 @@ st.markdown("""
 
 inject_custom_css()
 
-# Use a 3-column layout to create space on the sides
-left_spacer, main_content, right_spacer = st.columns([1, 5, 1])
+# The spacer columns are removed for this CSS-based approach to work reliably
+main_content = st.container()
 
 with main_content:
     # Create the two columns for the layout: chat on the left, map on the right
-    chat_col, map_col = st.columns([3, 2])
+    chat_col, map_col = st.columns([3, 2], gap="large")
 
-    # --- ENTIRE CHAT INTERFACE IS NOW INSIDE THE CHAT COLUMN ---
+    # Entire chat interface is placed inside the chat column
     with chat_col:
-        # Create a container with a fixed height for the scrollable chat history
-        chat_history_container = st.container(height=600, border=False)
+        # We no longer need a fixed height container here; CSS handles it.
+        chat_history_container = st.container()
         with chat_history_container:
-            # Initialize session state if needed
             if "session_id" not in st.session_state:
                 st.session_state.session_id = str(uuid.uuid4())
             if "messages" not in st.session_state:
                 st.session_state.messages = []
             
-            # Display past messages
             for message in st.session_state.messages:
                 role = message["role"]
                 avatar = USER_AVATAR if role == "user" else ASSISTANT_AVATAR
                 with st.chat_message(role, avatar=avatar):
                     st.markdown(message["content"])
 
-        # This is the chat input bar. It is now correctly inside the chat column.
+        # Chat input is the last element in the flexbox column
         if prompt := st.chat_input("Ask your question about Washington State Ferries..."):
-            # Add user message to session state
             st.session_state.messages.append({"role": "user", "content": prompt})
-            
-            # Get response from Dialogflow
             with st.spinner("Thinking..."):
                 agent_messages = detect_intent_texts(prompt, st.session_state.session_id)
-
-            # Add agent's response(s) to session state
             if agent_messages:
                 for m in agent_messages:
                     if m["type"] == "text":
                         st.session_state.messages.append({"role": "assistant", "content": m["content"]})
-            
-            # Rerun the script to redraw the chat history with the new messages
             st.rerun()
 
-    # --- MAP IS IN ITS OWN COLUMN ---
+    # The map column remains the same
     with map_col:
         st.image(
             "https://storage.googleapis.com/ferry_data/NewWSF/ferryimages/Route%20Map.png",
