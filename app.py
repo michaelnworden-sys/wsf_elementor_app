@@ -38,39 +38,44 @@ def inject_custom_css():
 
     .main, .stApp, html, body, [class*="css"] { font-family: 'Poppins', sans-serif !important; }
 
-    /* Focused center layout - not full width */
+    /* Force a more focused layout */
     .main .block-container {
-        max-width: 1400px !important;
-        padding-left: 5% !important;
-        padding-right: 5% !important;
+        max-width: 1200px !important;
+        padding-left: 3rem !important;
+        padding-right: 3rem !important;
     }
 
-    /* Chat column - align content to the right with gap */
-    [data-testid="column"]:first-child {
+    /* Target the horizontal block that contains columns */
+    [data-testid="stHorizontalBlock"] {
+        gap: 3rem !important;
+        max-width: 1000px !important;
+        margin: 0 auto !important;
+    }
+
+    /* First column (chat) - align right */
+    [data-testid="stHorizontalBlock"] > div:first-child {
         display: flex !important;
         flex-direction: column !important;
         align-items: flex-end !important;
-        padding-right: 2.5% !important;
     }
 
-    /* Map column - align content to the left with gap */
-    [data-testid="column"]:last-child {
+    /* Second column (map) - align left */
+    [data-testid="stHorizontalBlock"] > div:last-child {
         display: flex !important;
         flex-direction: column !important;
         align-items: flex-start !important;
-        padding-left: 2.5% !important;
     }
 
-    /* Chat container - limit width */
-    [data-testid="column"]:first-child > div {
+    /* Limit chat width */
+    [data-testid="stHorizontalBlock"] > div:first-child > div {
+        max-width: 450px !important;
         width: 100% !important;
-        max-width: 600px !important;
     }
 
-    /* Map container - limit width and center the image */
-    [data-testid="column"]:last-child > div {
+    /* Limit map width */
+    [data-testid="stHorizontalBlock"] > div:last-child > div {
+        max-width: 400px !important;
         width: 100% !important;
-        max-width: 500px !important;
     }
 
     /* Chat message card */
@@ -126,26 +131,6 @@ def inject_custom_css():
         right:10px !important;
         top:50% !important;
         transform:translateY(-50%) !important;
-    }
-
-    /* Mobile responsive */
-    @media (max-width: 768px) {
-        .main .block-container {
-            padding-left: 1rem !important;
-            padding-right: 1rem !important;
-        }
-        
-        [data-testid="column"]:first-child,
-        [data-testid="column"]:last-child {
-            align-items: center !important;
-            padding-left: 0 !important;
-            padding-right: 0 !important;
-        }
-        
-        [data-testid="column"]:first-child > div,
-        [data-testid="column"]:last-child > div {
-            max-width: 100% !important;
-        }
     }
     </style>
     """, unsafe_allow_html=True)
