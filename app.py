@@ -38,23 +38,58 @@ def inject_custom_css():
 
     .main, .stApp, html, body, [class*="css"] { font-family: 'Poppins', sans-serif !important; }
 
-    /* Makes the map column sticky */
+    /* Makes the second column (the map) sticky */
     div[data-testid="stHorizontalBlock"] > div:nth-child(2) {
         position: sticky;
         top: 2rem;
     }
 
-    /* Chat message card styling */
+    /* Chat message card */
     [data-testid="stChatMessage"]{
-        background:#FFFFFF !important; border:1px solid #E0EFEC !important;
-        border-radius:16px !important; padding:24px 32px !important;
-        margin:8px 0 !important; box-shadow:none !important;
+        background:#FFFFFF !important;
+        border:1px solid #E0EFEC !important;
+        border-radius:16px !important;
+        padding:24px 32px !important;
+        margin:8px 0 !important;
+        box-shadow:none !important;
     }
-    
-    /* Input bar styling */
+
+    /* Text */
+    [data-testid="stChatMessage"] p,
+    [data-testid="stChatMessage"] span,
+    [data-testid="stChatMessage"] li {
+        color:#000000 !important;
+        font-size:16px !important;
+        line-height:1.6 !important;
+        white-space:pre-wrap !important;
+        margin:8px 0 !important;
+    }
+
+    /* Input */
     [data-testid="stChatInput"] > div{
-        background:#FFFFFF !important; border:2px solid #00A693 !important;
+        background:#FFFFFF !important;
+        border:2px solid #00A693 !important;
         border-radius:30px !important;
+        min-height:60px !important;
+        padding:8px 16px !important;
+        position: relative !important;
+    }
+    [data-testid="stChatInput"] textarea{
+        background:#FFFFFF !important;
+        color:#2D3748 !important;
+        border:none !important;
+        font-size:16px !important;
+        padding:12px 16px !important;
+    }
+    [data-testid="stChatInput"] button{
+        background:#00A693 !important;
+        color:#FFFFFF !important;
+        border:none !important;
+        border-radius:50% !important;
+        position:absolute !important;
+        right:10px !important;
+        top:50% !important;
+        transform:translateY(-50%) !important;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -71,20 +106,27 @@ def detect_intent_texts(text, session_id):
         credentials = service_account.Credentials.from_service_account_info(credentials_info)
         session_client = dialogflow.SessionsClient(client_options=client_options, credentials=credentials)
         session_path = session_client.session_path(project=PROJECT_ID, location=location, agent=AGENT_ID, session=session_id)
+
         text_input = dialogflow.TextInput(text=text)
         query_input = dialogflow.QueryInput(text=text_input, language_code="en")
         request = dialogflow.DetectIntentRequest(session=session_path, query_input=query_input)
+
         response = session_client.detect_intent(request=request)
+
         messages = []
         for msg in response.query_result.response_messages:
             try:
                 if hasattr(msg, 'text') and msg.text:
                     for t in msg.text.text:
-                        if t.strip(): messages.append({"type": "text", "content": t})
+                        if t.strip():
+                            messages.append({"type": "text", "content": t})
                 elif hasattr(msg, 'payload') and msg.payload:
-                    messages.append({"type": "payload", "content": dict(msg.payload)})
-            except Exception: continue
+                    payload = dict(msg.payload)
+                    messages.append({"type": "payload", "content": payload})
+            except Exception:
+                continue
         return messages
+
     except Exception as e:
         st.error(f"An error occurred with Dialogflow: {e}")
         return []
@@ -100,19 +142,19 @@ st.markdown("""
 
 inject_custom_css()
 
-# We use the three-column layout again for reliable centering
+# Use a 3-column layout to create space on the sides
 left_spacer, main_content, right_spacer = st.columns([1, 5, 1])
 
 with main_content:
-    # Create the two columns for chat and map
-    chat_col, map_col = st.columns([3, 2], gap="large")
+    # Create the two columns for the layout: chat on the left, map on the right
+    chat_col, map_col = st.columns([3, 2])
 
+    # --- ENTIRE CHAT INTERFACE IS NOW INSIDE THE CHAT COLUMN ---
     with chat_col:
-        # --- THE KEY FIX ---
-        # 1. We create the chat history container with a shorter height to prevent page scrolling.
-        #    Adjust this value (e.g., 500, 550, 600) to best fit your screen.
-        chat_history_container = st.container(height=550, border=False)
+        # Create a container with a fixed height for the scrollable chat history
+        chat_history_container = st.container(height=600, border=False)
         with chat_history_container:
+            # Initialize session state if needed
             if "session_id" not in st.session_state:
                 st.session_state.session_id = str(uuid.uuid4())
             if "messages" not in st.session_state:
@@ -125,18 +167,25 @@ with main_content:
                 with st.chat_message(role, avatar=avatar):
                     st.markdown(message["content"])
 
-        # 2. The chat input is placed *inside* the chat column but *outside* the history container.
-        #    This correctly pins it to the bottom of the column.
+        # This is the chat input bar. It is now correctly inside the chat column.
         if prompt := st.chat_input("Ask your question about Washington State Ferries..."):
+            # Add user message to session state
             st.session_state.messages.append({"role": "user", "content": prompt})
+            
+            # Get response from Dialogflow
             with st.spinner("Thinking..."):
                 agent_messages = detect_intent_texts(prompt, st.session_state.session_id)
+
+            # Add agent's response(s) to session state
             if agent_messages:
                 for m in agent_messages:
                     if m["type"] == "text":
                         st.session_state.messages.append({"role": "assistant", "content": m["content"]})
+            
+            # Rerun the script to redraw the chat history with the new messages
             st.rerun()
 
+    # --- MAP IS IN ITS OWN COLUMN ---
     with map_col:
         st.image(
             "https://storage.googleapis.com/ferry_data/NewWSF/ferryimages/Route%20Map.png",
