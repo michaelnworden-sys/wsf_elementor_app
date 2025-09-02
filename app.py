@@ -4,7 +4,7 @@ from google.oauth2 import service_account
 import uuid
 import base64
 
-# Set the page layout to "wide". This allows us to control the layout with columns.
+# Set the page layout to "wide". This should be the first Streamlit command.
 st.set_page_config(layout="wide")
 
 # ---------- BRAND AVATARS with Ferry and User SVGs ----------
@@ -12,7 +12,7 @@ def svg_to_base64(svg_str):
     return "data:image/svg+xml;base64," + base64.b64encode(svg_str.encode("utf-8")).decode("utf-8")
 
 # User avatar: teal background with white user icon
-user_svg = '''<svg xmlns="http://www.w.org/2000/svg" width="64" height="64">
+user_svg = '''<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64">
 <circle cx="32" cy="32" r="32" fill="#00A693"/>
 <svg x="16" y="16" width="32" height="32" viewBox="0 0 640 640">
 <path fill="white" d="M320 312C386.3 312 440 258.3 440 192C440 125.7 386.3 72 320 72C253.7 72 200 125.7 200 192C200 258.3 253.7 312 320 312zM290.3 368C191.8 368 112 447.8 112 546.3C112 562.7 125.3 576 141.7 576L498.3 576C514.7 576 528 562.7 528 546.3C528 447.8 448.2 368 349.7 368L290.3 368z"/>
@@ -20,7 +20,7 @@ user_svg = '''<svg xmlns="http://www.w.org/2000/svg" width="64" height="64">
 </svg>'''
 
 # Assistant avatar: light teal background with dark green ferry icon
-assistant_svg = '''<svg xmlns="http://www.w.org/2000/svg" width="64" height="64">
+assistant_svg = '''<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64">
 <circle cx="32" cy="32" r="32" fill="#E0EFEC"/>
 <svg x="16" y="16" width="32" height="32" viewBox="0 0 640 640">
 <path fill="#006B5B" d="M224 96C224 78.3 238.3 64 256 64L384 64C401.7 64 416 78.3 416 96L416 128L464 128C508.2 128 544 163.8 544 208L544 336L543.9 336C544 336.7 544 337.3 544 338C544 368.2 536.4 397.8 522 424.3L509.3 447.6L508.7 448.6C486.4 437.3 462.2 431.8 437.9 431.9C405.4 432.1 373 442.6 345.5 463.3C323.4 479.9 316.4 479.9 294.3 463.3C266.2 442.2 233 431.7 199.9 431.9C176.3 432.1 152.8 437.6 131.2 448.6L130.6 447.6L117.9 424.3C103.5 397.8 95.9 368.1 95.9 338C95.9 337.3 95.9 336.6 96 336L95.9 336L95.9 208C95.9 163.8 131.7 128 175.9 128L223.9 128L223.9 96zM160 320L480 320L480 208C480 199.2 472.8 192 464 192L176 192C167.2 192 160 199.2 160 208L160 320z"/>
@@ -38,10 +38,10 @@ def inject_custom_css():
 
     .main, .stApp, html, body, [class*="css"] { font-family: 'Poppins', sans-serif !important; }
 
-    /* --- CHANGE: Makes the SECOND column (now the map) sticky --- */
+    /* Makes the second column (the map) sticky */
     div[data-testid="stHorizontalBlock"] > div:nth-child(2) {
         position: sticky;
-        top: 2rem; /* The distance from the top of the viewport */
+        top: 2rem;
     }
 
     /* Chat message card */
@@ -56,22 +56,15 @@ def inject_custom_css():
 
     /* Text */
     [data-testid="stChatMessage"] p,
-    [data-testid="stChatMessage"] span{
+    [data-testid="stChatMessage"] span,
+    [data-testid="stChatMessage"] li {
         color:#000000 !important;
         font-size:16px !important;
         line-height:1.6 !important;
         white-space:pre-wrap !important;
         margin:8px 0 !important;
     }
-
-    /* Lists */
-    [data-testid="stChatMessage"] ul,
-    [data-testid="stChatMessage"] ol{
-        margin:12px 0 !important;
-        padding-left:22px !important;
-    }
-    [data-testid="stChatMessage"] li{ margin:4px 0 !important; }
-
+    
     /* Input */
     [data-testid="stChatInput"] > div{
         background:#FFFFFF !important;
@@ -149,58 +142,52 @@ st.markdown("""
 
 inject_custom_css()
 
-# --- CHANGE: Create a 3-column layout to add spacing on the sides ---
-# The middle column (5 parts) will hold our content. The outer columns (1 part each) are empty spacers.
+# Use a 3-column layout to create space on the sides
 left_spacer, main_content, right_spacer = st.columns([1, 5, 1])
 
-# All app content goes into the "main_content" column
 with main_content:
     # Create the two columns for the layout: chat on the left, map on the right
     chat_col, map_col = st.columns([3, 2])
 
-    # Add the entire chat interface to the first (left) column
     with chat_col:
+        # Create a container with a fixed height for the chat history
+        chat_history_container = st.container(height=600, border=False)
+        
+        # Initialize session state for session_id and messages if they don't exist
         if "session_id" not in st.session_state:
             st.session_state.session_id = str(uuid.uuid4())
         if "messages" not in st.session_state:
             st.session_state.messages = []
 
-        # Replay history with custom avatars
-        for message in st.session_state.messages:
-            role = message["role"]
-            avatar = USER_AVATAR if role == "user" else ASSISTANT_AVATAR
-            with st.chat_message(role, avatar=avatar):
-                st.markdown(message["content"])
+        # Display the entire chat history inside the container
+        with chat_history_container:
+            for message in st.session_state.messages:
+                role = message["role"]
+                avatar = USER_AVATAR if role == "user" else ASSISTANT_AVATAR
+                with st.chat_message(role, avatar=avatar):
+                    st.markdown(message["content"])
 
-        prompt = st.chat_input("Ask your question about Washington State Ferries...")
-        if prompt:
-            # Echo user with custom avatar
-            st.session_state.messages.append({"role": "user", "content": prompt})
-            with st.chat_message("user", avatar=USER_AVATAR):
-                st.markdown(prompt)
+    # Render the chat input bar *outside* the history container, but within the column
+    if prompt := st.chat_input("Ask your question about Washington State Ferries..."):
+        # Add user message to session state
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        
+        # Get response from Dialogflow
+        with st.spinner("Thinking..."):
+            agent_messages = detect_intent_texts(prompt, st.session_state.session_id)
 
-            with st.spinner("Thinking..."):
-                agent_messages = detect_intent_texts(prompt, st.session_state.session_id)
+        # Add agent's response(s) to session state
+        if agent_messages:
+            for m in agent_messages:
+                if m["type"] == "text":
+                    st.session_state.messages.append({"role": "assistant", "content": m["content"]})
+        
+        # Rerun the script to redraw the chat history with the new messages
+        st.rerun()
 
-            if agent_messages:
-                for m in agent_messages:
-                    if m["type"] == "text":
-                        st.session_state.messages.append({"role": "assistant", "content": m["content"]})
-                        with st.chat_message("assistant", avatar=ASSISTANT_AVATAR):
-                            st.markdown(m["content"])
-                    elif m["type"] == "payload":
-                        payload = m["content"]
-                        with st.chat_message("assistant", avatar=ASSISTANT_AVATAR):
-                            if "buttons" in payload:
-                                for btn in payload["buttons"]:
-                                    st.button(btn["label"])
-                            if "image" in payload:
-                                st.image(payload["image"]["url"], caption=payload["image"].get("caption", ""))
-
-    # Add the map to the second (right) column
+    # The map is placed in the second column
     with map_col:
         st.image(
             "https://storage.googleapis.com/ferry_data/NewWSF/ferryimages/Route%20Map.png",
-            # --- CHANGE: Fix the deprecation warning ---
             use_container_width=True
         )
