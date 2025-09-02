@@ -91,6 +91,14 @@ def inject_custom_css():
         top:50% !important;
         transform:translateY(-50%) !important;
     }
+    /* Make columns equal height and responsive */
+        div[data-testid="stHorizontalBlock"] {
+        height: 70vh !important;
+    }
+
+       div[data-testid="stHorizontalBlock"] > div {
+       height: 100% !important;
+    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -158,7 +166,7 @@ with main_content:
     # --- ENTIRE CHAT INTERFACE IS NOW INSIDE THE CHAT COLUMN ---
     with chat_col:
         # Create a container with a fixed height for the scrollable chat history
-        chat_history_container = st.container(height=600, border=False)
+        chat_history_container = st.container(height=400, border=False)
         with chat_history_container:
             # Display past messages
             for message in st.session_state.messages:
