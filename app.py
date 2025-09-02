@@ -223,7 +223,7 @@ with chat_col:
 
 with map_col:
     st.markdown("""
-    <div style="width: 100%; height: 650px; display: flex; align-items: center; justify-content: center;">
+    <div style="width: 100%; height: 600px; display: flex; align-items: center; justify-content: center;">
         <img src="https://storage.googleapis.com/ferry_data/NewWSF/ferryimages/Route%20Map.png" 
              style="max-width: 100%; max-height: 100%; object-fit: contain;" />
     </div>
