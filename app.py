@@ -30,7 +30,7 @@ assistant_svg = '''<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64
 USER_AVATAR = svg_to_base64(user_svg)
 ASSISTANT_AVATAR = svg_to_base64(assistant_svg)
 
-# ---------- CSS with RESPONSIVE GRID ----------
+# ---------- CSS with FOCUSED CENTERED LAYOUT ----------
 def inject_custom_css():
     st.markdown("""
     <style>
@@ -38,51 +38,39 @@ def inject_custom_css():
 
     .main, .stApp, html, body, [class*="css"] { font-family: 'Poppins', sans-serif !important; }
 
-    /* Create responsive grid layout */
-    .main-container {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 2rem;
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 0 1rem;
-        height: 70vh;
+    /* Focused center layout - not full width */
+    .main .block-container {
+        max-width: 1400px !important;
+        padding-left: 5% !important;
+        padding-right: 5% !important;
     }
 
-    /* On tablets and phones, stack vertically */
-    @media (max-width: 768px) {
-        .main-container {
-            grid-template-columns: 1fr;
-            grid-template-rows: auto 1fr;
-            height: auto;
-        }
-        .map-container {
-            order: -1; /* Map goes first on mobile */
-        }
+    /* Chat column - align content to the right with gap */
+    [data-testid="column"]:first-child {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-end !important;
+        padding-right: 2.5% !important;
     }
 
-    .chat-container {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
+    /* Map column - align content to the left with gap */
+    [data-testid="column"]:last-child {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        padding-left: 2.5% !important;
     }
 
-    .chat-history {
-        flex: 1;
-        overflow-y: auto;
-        margin-bottom: 1rem;
+    /* Chat container - limit width */
+    [data-testid="column"]:first-child > div {
+        width: 100% !important;
+        max-width: 600px !important;
     }
 
-    .map-container {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .map-container img {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
+    /* Map container - limit width and center the image */
+    [data-testid="column"]:last-child > div {
+        width: 100% !important;
+        max-width: 500px !important;
     }
 
     /* Chat message card */
@@ -139,6 +127,26 @@ def inject_custom_css():
         top:50% !important;
         transform:translateY(-50%) !important;
     }
+
+    /* Mobile responsive */
+    @media (max-width: 768px) {
+        .main .block-container {
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+        }
+        
+        [data-testid="column"]:first-child,
+        [data-testid="column"]:last-child {
+            align-items: center !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+        
+        [data-testid="column"]:first-child > div,
+        [data-testid="column"]:last-child > div {
+            max-width: 100% !important;
+        }
+    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -194,12 +202,12 @@ if "session_id" not in st.session_state:
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# Create two columns using Streamlit's native columns
+# Create two columns with equal width
 chat_col, map_col = st.columns([1, 1])
 
 with chat_col:
     # Chat history in a container
-    chat_container = st.container(height=500, border=False)
+    chat_container = st.container(height=600, border=False)
     with chat_container:
         for message in st.session_state.messages:
             role = message["role"]
