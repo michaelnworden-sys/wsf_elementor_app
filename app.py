@@ -142,6 +142,12 @@ st.markdown("""
 
 inject_custom_css()
 
+# Initialize session state
+if "session_id" not in st.session_state:
+    st.session_state.session_id = str(uuid.uuid4())
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
 # Use a 3-column layout to create space on the sides
 left_spacer, main_content, right_spacer = st.columns([1, 5, 1])
 
@@ -151,23 +157,17 @@ with main_content:
 
     # --- ENTIRE CHAT INTERFACE IS NOW INSIDE THE CHAT COLUMN ---
     with chat_col:
-    # Create a container with a fixed height for the scrollable chat history
-    chat_history_container = st.container(height=600, border=False)
-    with chat_history_container:
-        # Initialize session state if needed
-        if "session_id" not in st.session_state:
-            st.session_state.session_id = str(uuid.uuid4())
-        if "messages" not in st.session_state:
-            st.session_state.messages = []
-        
-        # Display past messages
-        for message in st.session_state.messages:
-            role = message["role"]
-            avatar = USER_AVATAR if role == "user" else ASSISTANT_AVATAR
-            with st.chat_message(role, avatar=avatar):
-                st.markdown(message["content"])
+        # Create a container with a fixed height for the scrollable chat history
+        chat_history_container = st.container(height=600, border=False)
+        with chat_history_container:
+            # Display past messages
+            for message in st.session_state.messages:
+                role = message["role"]
+                avatar = USER_AVATAR if role == "user" else ASSISTANT_AVATAR
+                with st.chat_message(role, avatar=avatar):
+                    st.markdown(message["content"])
 
-        # This is the chat input bar. It is now correctly inside the chat column.
+        # Chat input is OUTSIDE the container but INSIDE the chat column
         if prompt := st.chat_input("Ask your question about Washington State Ferries..."):
             # Add user message to session state
             st.session_state.messages.append({"role": "user", "content": prompt})
