@@ -4,9 +4,6 @@ from google.oauth2 import service_account
 import uuid
 import base64
 
-# Set the page layout to "wide". This should be the first Streamlit command.
-st.set_page_config(layout="wide")
-
 # ---------- BRAND AVATARS with Ferry and User SVGs ----------
 def svg_to_base64(svg_str):
     return "data:image/svg+xml;base64," + base64.b64encode(svg_str.encode("utf-8")).decode("utf-8")
@@ -30,19 +27,13 @@ assistant_svg = '''<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64
 USER_AVATAR = svg_to_base64(user_svg)
 ASSISTANT_AVATAR = svg_to_base64(assistant_svg)
 
-# ---------- CSS (formatting + STICKY MAP RULE) ----------
+# ---------- CSS (formatting only; no avatar hacks) ----------
 def inject_custom_css():
     st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
     .main, .stApp, html, body, [class*="css"] { font-family: 'Poppins', sans-serif !important; }
-
-    /* Makes the second column (the map) sticky */
-    div[data-testid="stHorizontalBlock"] > div:nth-child(2) {
-        position: sticky;
-        top: 2rem;
-    }
 
     /* Chat message card */
     [data-testid="stChatMessage"]{
@@ -56,14 +47,21 @@ def inject_custom_css():
 
     /* Text */
     [data-testid="stChatMessage"] p,
-    [data-testid="stChatMessage"] span,
-    [data-testid="stChatMessage"] li {
+    [data-testid="stChatMessage"] span{
         color:#000000 !important;
         font-size:16px !important;
         line-height:1.6 !important;
         white-space:pre-wrap !important;
         margin:8px 0 !important;
     }
+
+    /* Lists */
+    [data-testid="stChatMessage"] ul,
+    [data-testid="stChatMessage"] ol{
+        margin:12px 0 !important;
+        padding-left:22px !important;
+    }
+    [data-testid="stChatMessage"] li{ margin:4px 0 !important; }
 
     /* Input */
     [data-testid="stChatInput"] > div{
@@ -90,22 +88,6 @@ def inject_custom_css():
         right:10px !important;
         top:50% !important;
         transform:translateY(-50%) !important;
-    }
-
-    /* Make columns equal height and responsive with max height */
-    div[data-testid="stHorizontalBlock"] {
-        height: min(70vh, 500px) !important;
-        max-height: 500px !important;
-    }
-
-    div[data-testid="stHorizontalBlock"] > div {
-        height: 100% !important;
-    }
-
-    /* Constrain the map size on large screens */
-    div[data-testid="stHorizontalBlock"] img {
-        max-height: 500px !important;
-        object-fit: contain !important;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -148,7 +130,6 @@ def detect_intent_texts(text, session_id):
         return []
 
 # ---------- UI ----------
-# The header remains full-width at the top
 st.markdown("""
 <div style="display:flex; align-items:center; justify-content:center; gap:15px; color:#006B5B; font-family:'Poppins', sans-serif; font-weight:700; text-align:center; padding:20px 0; border-bottom:3px solid #00A693; margin-bottom:30px;">
   <img src="https://storage.googleapis.com/ferry_data/NewWSF/ferryimages/200px-Washington_State_Department_of_Transportation_Logo.png" style="height:4em; width:auto;">
@@ -158,52 +139,39 @@ st.markdown("""
 
 inject_custom_css()
 
-# Initialize session state
 if "session_id" not in st.session_state:
     st.session_state.session_id = str(uuid.uuid4())
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# Use a 3-column layout to create space on the sides
-left_spacer, main_content, right_spacer = st.columns([1, 5, 1])
+# replay history with custom avatars
+for message in st.session_state.messages:
+    role = message["role"]
+    avatar = USER_AVATAR if role == "user" else ASSISTANT_AVATAR
+    with st.chat_message(role, avatar=avatar):
+        st.markdown(message["content"])
 
-with main_content:
-    # Create the two columns for the layout: chat on the left, map on the right
-    chat_col, map_col = st.columns([3, 2])
+prompt = st.chat_input("Ask your question about Washington State Ferries...")
+if prompt:
+    # echo user with custom avatar
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    with st.chat_message("user", avatar=USER_AVATAR):
+        st.markdown(prompt)
 
-    # --- ENTIRE CHAT INTERFACE IS NOW INSIDE THE CHAT COLUMN ---
-    with chat_col:
-        # Create a container with a fixed height for the scrollable chat history
-        chat_history_container = st.container(height=400, border=False)
-        with chat_history_container:
-            # Display past messages
-            for message in st.session_state.messages:
-                role = message["role"]
-                avatar = USER_AVATAR if role == "user" else ASSISTANT_AVATAR
-                with st.chat_message(role, avatar=avatar):
-                    st.markdown(message["content"])
+    with st.spinner("Thinking..."):
+        agent_messages = detect_intent_texts(prompt, st.session_state.session_id)
 
-        # Chat input is OUTSIDE the container but INSIDE the chat column
-        if prompt := st.chat_input("Ask your question about Washington State Ferries..."):
-            # Add user message to session state
-            st.session_state.messages.append({"role": "user", "content": prompt})
-            
-            # Get response from Dialogflow
-            with st.spinner("Thinking..."):
-                agent_messages = detect_intent_texts(prompt, st.session_state.session_id)
-
-            # Add agent's response(s) to session state
-            if agent_messages:
-                for m in agent_messages:
-                    if m["type"] == "text":
-                        st.session_state.messages.append({"role": "assistant", "content": m["content"]})
-            
-            # Rerun the script to redraw the chat history with the new messages
-            st.rerun()
-
-    # --- MAP IS IN ITS OWN COLUMN ---
-    with map_col:
-        st.image(
-            "https://storage.googleapis.com/ferry_data/NewWSF/ferryimages/Route%20Map.png",
-            use_container_width=True
-        )
+    if agent_messages:
+        for m in agent_messages:
+            if m["type"] == "text":
+                st.session_state.messages.append({"role": "assistant", "content": m["content"]})
+                with st.chat_message("assistant", avatar=ASSISTANT_AVATAR):
+                    st.markdown(m["content"])
+            elif m["type"] == "payload":
+                payload = m["content"]
+                with st.chat_message("assistant", avatar=ASSISTANT_AVATAR):
+                    if "buttons" in payload:
+                        for btn in payload["buttons"]:
+                            st.button(btn["label"])
+                    if "image" in payload:
+                        st.image(payload["image"]["url"], caption=payload["image"].get("caption", ""))
