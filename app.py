@@ -90,15 +90,21 @@ def inject_custom_css():
         right:10px !important;
         top:50% !important;
         transform:translateY(-50%) !important;
-    }
-    /* Make columns equal height and responsive */
-        div[data-testid="stHorizontalBlock"] {
-        height: 70vh !important;
-    }
+    cssCopy/* Make columns equal height and responsive with max height */
+div[data-testid="stHorizontalBlock"] {
+    height: min(70vh, 500px) !important;
+    max-height: 500px !important;
+}
 
-       div[data-testid="stHorizontalBlock"] > div {
-       height: 100% !important;
-    }
+div[data-testid="stHorizontalBlock"] > div {
+    height: 100% !important;
+}
+
+/* Constrain the map size on large screens */
+div[data-testid="stHorizontalBlock"] img {
+    max-height: 500px !important;
+    object-fit: contain !important;
+}
     </style>
     """, unsafe_allow_html=True)
 
