@@ -222,7 +222,9 @@ with chat_col:
         st.rerun()
 
 with map_col:
-    st.image(
-        "https://storage.googleapis.com/ferry_data/NewWSF/ferryimages/Route%20Map.png",
-        use_container_width=True
-    )
+    st.markdown("""
+    <div style="width: 100%; height: 500px; display: flex; align-items: center; justify-content: center;">
+        <img src="https://storage.googleapis.com/ferry_data/NewWSF/ferryimages/Route%20Map.png" 
+             style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+    </div>
+    """, unsafe_allow_html=True)
