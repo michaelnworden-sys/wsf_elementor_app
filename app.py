@@ -4,9 +4,6 @@ from google.oauth2 import service_account
 import uuid
 import base64
 
-# Set page to wide layout
-st.set_page_config(layout="wide")
-
 # ---------- BRAND AVATARS with Ferry and User SVGs ----------
 def svg_to_base64(svg_str):
     return "data:image/svg+xml;base64," + base64.b64encode(svg_str.encode("utf-8")).decode("utf-8")
@@ -30,53 +27,13 @@ assistant_svg = '''<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64
 USER_AVATAR = svg_to_base64(user_svg)
 ASSISTANT_AVATAR = svg_to_base64(assistant_svg)
 
-# ---------- CSS with FOCUSED CENTERED LAYOUT ----------
+# ---------- CSS (formatting only; no avatar hacks) ----------
 def inject_custom_css():
     st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
     .main, .stApp, html, body, [class*="css"] { font-family: 'Poppins', sans-serif !important; }
-
-    /* Force a more focused layout */
-    .main .block-container {
-        max-width: 1200px !important;
-        padding-left: 3rem !important;
-        padding-right: 3rem !important;
-    }
-
-    /* Target the horizontal block that contains columns */
-    [data-testid="stHorizontalBlock"] {
-        gap: 3rem !important;
-        max-width: 1000px !important;
-        margin: 0 auto !important;
-    }
-
-    /* First column (chat) - align right */
-    [data-testid="stHorizontalBlock"] > div:first-child {
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: flex-end !important;
-    }
-
-    /* Second column (map) - align left */
-    [data-testid="stHorizontalBlock"] > div:last-child {
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: flex-start !important;
-    }
-
-    /* Limit chat width */
-    [data-testid="stHorizontalBlock"] > div:first-child > div {
-        max-width: 450px !important;
-        width: 100% !important;
-    }
-
-    /* Limit map width */
-    [data-testid="stHorizontalBlock"] > div:last-child > div {
-        max-width: 400px !important;
-        width: 100% !important;
-    }
 
     /* Chat message card */
     [data-testid="stChatMessage"]{
@@ -187,37 +144,34 @@ if "session_id" not in st.session_state:
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# Create two columns with equal width
-chat_col, map_col = st.columns([1, 1])
+# replay history with custom avatars
+for message in st.session_state.messages:
+    role = message["role"]
+    avatar = USER_AVATAR if role == "user" else ASSISTANT_AVATAR
+    with st.chat_message(role, avatar=avatar):
+        st.markdown(message["content"])
 
-with chat_col:
-    # Chat history in a container
-    chat_container = st.container(height=600, border=False)
-    with chat_container:
-        for message in st.session_state.messages:
-            role = message["role"]
-            avatar = USER_AVATAR if role == "user" else ASSISTANT_AVATAR
-            with st.chat_message(role, avatar=avatar):
-                st.markdown(message["content"])
+prompt = st.chat_input("Ask your question about Washington State Ferries...")
+if prompt:
+    # echo user with custom avatar
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    with st.chat_message("user", avatar=USER_AVATAR):
+        st.markdown(prompt)
 
-    # Chat input outside the container
-    if prompt := st.chat_input("Ask your question about Washington State Ferries..."):
-        st.session_state.messages.append({"role": "user", "content": prompt})
-        
-        with st.spinner("Thinking..."):
-            agent_messages = detect_intent_texts(prompt, st.session_state.session_id)
+    with st.spinner("Thinking..."):
+        agent_messages = detect_intent_texts(prompt, st.session_state.session_id)
 
-        if agent_messages:
-            for m in agent_messages:
-                if m["type"] == "text":
-                    st.session_state.messages.append({"role": "assistant", "content": m["content"]})
-        
-        st.rerun()
-
-with map_col:
-    st.markdown("""
-    <div style="width: 100%; height: 600px; display: flex; align-items: center; justify-content: center;">
-        <img src="https://storage.googleapis.com/ferry_data/NewWSF/ferryimages/Route%20Map.png" 
-             style="max-width: 100%; max-height: 100%; object-fit: contain;" />
-    </div>
-    """, unsafe_allow_html=True)
+    if agent_messages:
+        for m in agent_messages:
+            if m["type"] == "text":
+                st.session_state.messages.append({"role": "assistant", "content": m["content"]})
+                with st.chat_message("assistant", avatar=ASSISTANT_AVATAR):
+                    st.markdown(m["content"])
+            elif m["type"] == "payload":
+                payload = m["content"]
+                with st.chat_message("assistant", avatar=ASSISTANT_AVATAR):
+                    if "buttons" in payload:
+                        for btn in payload["buttons"]:
+                            st.button(btn["label"])
+                    if "image" in payload:
+                        st.image(payload["image"]["url"], caption=payload["image"].get("caption", ""))
