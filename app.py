@@ -64,7 +64,7 @@ def inject_custom_css():
         white-space:pre-wrap !important;
         margin:8px 0 !important;
     }
-    
+
     /* Input */
     [data-testid="stChatInput"] > div{
         background:#FFFFFF !important;
@@ -149,43 +149,43 @@ with main_content:
     # Create the two columns for the layout: chat on the left, map on the right
     chat_col, map_col = st.columns([3, 2])
 
+    # --- ENTIRE CHAT INTERFACE IS NOW INSIDE THE CHAT COLUMN ---
     with chat_col:
-        # Create a container with a fixed height for the chat history
+        # Create a container with a fixed height for the scrollable chat history
         chat_history_container = st.container(height=600, border=False)
-        
-        # Initialize session state for session_id and messages if they don't exist
-        if "session_id" not in st.session_state:
-            st.session_state.session_id = str(uuid.uuid4())
-        if "messages" not in st.session_state:
-            st.session_state.messages = []
-
-        # Display the entire chat history inside the container
         with chat_history_container:
+            # Initialize session state if needed
+            if "session_id" not in st.session_state:
+                st.session_state.session_id = str(uuid.uuid4())
+            if "messages" not in st.session_state:
+                st.session_state.messages = []
+            
+            # Display past messages
             for message in st.session_state.messages:
                 role = message["role"]
                 avatar = USER_AVATAR if role == "user" else ASSISTANT_AVATAR
                 with st.chat_message(role, avatar=avatar):
                     st.markdown(message["content"])
 
-    # Render the chat input bar *outside* the history container, but within the column
-    if prompt := st.chat_input("Ask your question about Washington State Ferries..."):
-        # Add user message to session state
-        st.session_state.messages.append({"role": "user", "content": prompt})
-        
-        # Get response from Dialogflow
-        with st.spinner("Thinking..."):
-            agent_messages = detect_intent_texts(prompt, st.session_state.session_id)
+        # This is the chat input bar. It is now correctly inside the chat column.
+        if prompt := st.chat_input("Ask your question about Washington State Ferries..."):
+            # Add user message to session state
+            st.session_state.messages.append({"role": "user", "content": prompt})
+            
+            # Get response from Dialogflow
+            with st.spinner("Thinking..."):
+                agent_messages = detect_intent_texts(prompt, st.session_state.session_id)
 
-        # Add agent's response(s) to session state
-        if agent_messages:
-            for m in agent_messages:
-                if m["type"] == "text":
-                    st.session_state.messages.append({"role": "assistant", "content": m["content"]})
-        
-        # Rerun the script to redraw the chat history with the new messages
-        st.rerun()
+            # Add agent's response(s) to session state
+            if agent_messages:
+                for m in agent_messages:
+                    if m["type"] == "text":
+                        st.session_state.messages.append({"role": "assistant", "content": m["content"]})
+            
+            # Rerun the script to redraw the chat history with the new messages
+            st.rerun()
 
-    # The map is placed in the second column
+    # --- MAP IS IN ITS OWN COLUMN ---
     with map_col:
         st.image(
             "https://storage.googleapis.com/ferry_data/NewWSF/ferryimages/Route%20Map.png",
