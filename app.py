@@ -30,48 +30,28 @@ assistant_svg = '''<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64
 USER_AVATAR = svg_to_base64(user_svg)
 ASSISTANT_AVATAR = svg_to_base64(assistant_svg)
 
-# ---------- CSS (formatting + ADVANCED LAYOUT RULES) ----------
+# ---------- CSS (formatting + STICKY MAP RULE) ----------
 def inject_custom_css():
     st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
-    /* General Body Styling */
-    .main, .stApp, html, body, [class*="css"] {
-        font-family: 'Poppins', sans-serif !important;
-    }
+    .main, .stApp, html, body, [class*="css"] { font-family: 'Poppins', sans-serif !important; }
 
-    /* --- LAYOUT FIXES --- */
-    /* This targets the container of the two main columns (chat and map) */
-    .main .block-container > div:first-child > div:nth-child(2) > div {
-        height: 75vh; /* Sets the height of the main content area */
-    }
-
-    /* This targets the chat column */
-    .main .block-container > div:first-child > div:nth-child(2) > div > div:nth-child(1) {
-        height: 100%;       /* Makes the column fill the parent's height */
-        display: flex;      /* Enables flexbox for positioning */
-        flex-direction: column; /* Stacks children (history and input) vertically */
-    }
-
-    /* This targets the chat history container */
-    .main .block-container > div:first-child > div:nth-child(2) > div > div:nth-child(1) > div:first-child {
-        flex-grow: 1;       /* Allows the history to expand and fill available space */
-        overflow-y: auto;   /* Adds a scrollbar ONLY to the history when needed */
-    }
-    
     /* Makes the map column sticky */
-    .main .block-container > div:first-child > div:nth-child(2) > div > div:nth-child(2) {
+    div[data-testid="stHorizontalBlock"] > div:nth-child(2) {
         position: sticky;
         top: 2rem;
     }
-    
-    /* --- CHAT BUBBLE STYLING (No changes here) --- */
+
+    /* Chat message card styling */
     [data-testid="stChatMessage"]{
         background:#FFFFFF !important; border:1px solid #E0EFEC !important;
         border-radius:16px !important; padding:24px 32px !important;
         margin:8px 0 !important; box-shadow:none !important;
     }
+    
+    /* Input bar styling */
     [data-testid="stChatInput"] > div{
         background:#FFFFFF !important; border:2px solid #00A693 !important;
         border-radius:30px !important;
@@ -120,30 +100,33 @@ st.markdown("""
 
 inject_custom_css()
 
-# The spacer columns are removed for this CSS-based approach to work reliably
-main_content = st.container()
+# We use the three-column layout again for reliable centering
+left_spacer, main_content, right_spacer = st.columns([1, 5, 1])
 
 with main_content:
-    # Create the two columns for the layout: chat on the left, map on the right
+    # Create the two columns for chat and map
     chat_col, map_col = st.columns([3, 2], gap="large")
 
-    # Entire chat interface is placed inside the chat column
     with chat_col:
-        # We no longer need a fixed height container here; CSS handles it.
-        chat_history_container = st.container()
+        # --- THE KEY FIX ---
+        # 1. We create the chat history container with a shorter height to prevent page scrolling.
+        #    Adjust this value (e.g., 500, 550, 600) to best fit your screen.
+        chat_history_container = st.container(height=550, border=False)
         with chat_history_container:
             if "session_id" not in st.session_state:
                 st.session_state.session_id = str(uuid.uuid4())
             if "messages" not in st.session_state:
                 st.session_state.messages = []
             
+            # Display past messages
             for message in st.session_state.messages:
                 role = message["role"]
                 avatar = USER_AVATAR if role == "user" else ASSISTANT_AVATAR
                 with st.chat_message(role, avatar=avatar):
                     st.markdown(message["content"])
 
-        # Chat input is the last element in the flexbox column
+        # 2. The chat input is placed *inside* the chat column but *outside* the history container.
+        #    This correctly pins it to the bottom of the column.
         if prompt := st.chat_input("Ask your question about Washington State Ferries..."):
             st.session_state.messages.append({"role": "user", "content": prompt})
             with st.spinner("Thinking..."):
@@ -154,7 +137,6 @@ with main_content:
                         st.session_state.messages.append({"role": "assistant", "content": m["content"]})
             st.rerun()
 
-    # The map column remains the same
     with map_col:
         st.image(
             "https://storage.googleapis.com/ferry_data/NewWSF/ferryimages/Route%20Map.png",
