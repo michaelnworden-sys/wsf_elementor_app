@@ -27,7 +27,7 @@ assistant_svg = '''<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64
 USER_AVATAR = svg_to_base64(user_svg)
 ASSISTANT_AVATAR = svg_to_base64(assistant_svg)
 
-# ---------- CSS (formatting only; no avatar hacks) ----------
+# ---------- MINIMAL CSS - JUST CHAT STYLING ----------
 def inject_custom_css():
     st.markdown("""
     <style>
@@ -35,6 +35,9 @@ def inject_custom_css():
 
     .main, .stApp, html, body, [class*="css"] { font-family: 'Poppins', sans-serif !important; }
 
+    /* Hide Streamlit branding */
+    .main .block-container { padding-top: 1rem !important; }
+    
     /* Chat message card */
     [data-testid="stChatMessage"]{
         background:#FFFFFF !important;
@@ -129,14 +132,7 @@ def detect_intent_texts(text, session_id):
         st.error(f"An error occurred with Dialogflow: {e}")
         return []
 
-# ---------- UI ----------
-st.markdown("""
-<div style="display:flex; align-items:center; justify-content:center; gap:15px; color:#006B5B; font-family:'Poppins', sans-serif; font-weight:700; text-align:center; padding:20px 0; border-bottom:3px solid #00A693; margin-bottom:30px;">
-  <img src="https://storage.googleapis.com/ferry_data/NewWSF/ferryimages/200px-Washington_State_Department_of_Transportation_Logo.png" style="height:4em; width:auto;">
-  <h1 style="margin:0; color:#006B5B;">Welcome to SoundHopper</h1>
-</div>
-""", unsafe_allow_html=True)
-
+# ---------- CLEAN CHAT INTERFACE ONLY ----------
 inject_custom_css()
 
 if "session_id" not in st.session_state:
@@ -144,20 +140,17 @@ if "session_id" not in st.session_state:
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# replay history with custom avatars
+# Display chat history
 for message in st.session_state.messages:
     role = message["role"]
     avatar = USER_AVATAR if role == "user" else ASSISTANT_AVATAR
     with st.chat_message(role, avatar=avatar):
         st.markdown(message["content"])
 
-prompt = st.chat_input("Ask your question about Washington State Ferries...")
-if prompt:
-    # echo user with custom avatar
+# Chat input
+if prompt := st.chat_input("Ask your question about Washington State Ferries..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
-    with st.chat_message("user", avatar=USER_AVATAR):
-        st.markdown(prompt)
-
+    
     with st.spinner("Thinking..."):
         agent_messages = detect_intent_texts(prompt, st.session_state.session_id)
 
@@ -165,13 +158,5 @@ if prompt:
         for m in agent_messages:
             if m["type"] == "text":
                 st.session_state.messages.append({"role": "assistant", "content": m["content"]})
-                with st.chat_message("assistant", avatar=ASSISTANT_AVATAR):
-                    st.markdown(m["content"])
-            elif m["type"] == "payload":
-                payload = m["content"]
-                with st.chat_message("assistant", avatar=ASSISTANT_AVATAR):
-                    if "buttons" in payload:
-                        for btn in payload["buttons"]:
-                            st.button(btn["label"])
-                    if "image" in payload:
-                        st.image(payload["image"]["url"], caption=payload["image"].get("caption", ""))
+    
+    st.rerun()
