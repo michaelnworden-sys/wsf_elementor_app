@@ -75,6 +75,9 @@ h1 {
     font-size: 16px !important;
     padding: 16px 20px !important;
 }
+[data-testid="stChatInput"] textarea::placeholder {
+  font-style: italic;
+}
 
 [data-testid="stChatInput"] button {
     background: linear-gradient(135deg, var(--wsf-teal), var(--wsf-dark-teal)) !important;
