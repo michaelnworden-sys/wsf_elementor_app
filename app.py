@@ -138,7 +138,9 @@ inject_custom_css()
 if "session_id" not in st.session_state:
     st.session_state.session_id = str(uuid.uuid4())
 if "messages" not in st.session_state:
-    st.session_state.messages = []
+    st.session_state.messages = [
+        {"role": "assistant", "content": "Welcome to SoundHopper from the Washington State Ferry System!\n\nI can help you find schedules, discover fares, make reservations, and help with questions about the ferry system.\n\nWhat can I help you with today?"}
+    ]
 
 # Display chat history
 for message in st.session_state.messages:
