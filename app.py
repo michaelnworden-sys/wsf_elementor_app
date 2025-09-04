@@ -148,7 +148,7 @@ for message in st.session_state.messages:
         st.markdown(message["content"])
 
 # Chat input
-if prompt := st.chat_input("How can I help?"):
+if prompt := st.chat_input("Let's plan a ferry trip ..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
     
     with st.spinner("Thinking..."):
