@@ -49,14 +49,15 @@ def inject_custom_css():
     }
 
     /* Text */
-    [data-testid="stChatMessage"] p,
-    [data-testid="stChatMessage"] span{
-        color:#000000 !important;
-        font-size:16px !important;
-        line-height:1.6 !important;
-        white-space:pre-wrap !important;
-        margin:8px 0 !important;
-    }
+[data-testid="stChatMessage"] p,
+[data-testid="stChatMessage"] span{
+    color:#000000 !important;
+    font-family: 'Poppins', sans-serif !important;
+    font-size:16px !important;
+    line-height:1.4 !important;
+    white-space:pre-wrap !important;
+    margin:8px 0 !important;
+}
 
     /* Lists */
     [data-testid="stChatMessage"] ul,
