@@ -76,7 +76,9 @@ h1 {
     padding: 16px 20px !important;
 }
 [data-testid="stChatInput"] textarea::placeholder {
-  font-style: italic !important;
+    font-style: italic !important;
+    color: #888888 !important;
+    opacity: 0.8 !important;
 }
 
 
