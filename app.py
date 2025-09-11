@@ -53,7 +53,7 @@ def inject_custom_css():
 [data-testid="stChatMessage"] span{
     color:#000000 !important;
     font-family: 'Poppins', sans-serif !important;
-    font-size:16px !important;
+    font-size:14px !important;
     line-height:1.4 !important;
     white-space:pre-wrap !important;
     margin:8px 0 !important;
