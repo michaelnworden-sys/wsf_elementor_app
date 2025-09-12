@@ -36,7 +36,7 @@ def inject_custom_css():
     .main, .stApp, html, body, [class*="css"] { font-family: 'Poppins', sans-serif !important; }
 
     /* Hide Streamlit branding */
-    .main .block-container { padding-top: 1rem !important; }
+    .main .block-container { padding-top: 0 !important; }
     
     /* Chat message card */
     [data-testid="stChatMessage"]{
