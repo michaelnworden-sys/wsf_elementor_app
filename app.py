@@ -93,6 +93,35 @@ def inject_custom_css():
         top:50% !important;
         transform:translateY(-50%) !important;
     }
+
+    /* Reset button next to input */
+    .reset-beside-input {
+        position: fixed !important;
+        bottom: 20px !important;
+        right: 80px !important;
+        z-index: 999 !important;
+    }
+
+    .reset-beside-input .stButton > button {
+        background: #E0EFEC !important;
+        color: #00A693 !important;
+        border: 2px solid #00A693 !important;
+        border-radius: 50% !important;
+        width: 50px !important;
+        height: 50px !important;
+        font-size: 18px !important;
+        padding: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        transition: all 0.3s ease !important;
+    }
+
+    .reset-beside-input .stButton > button:hover {
+        background: #00A693 !important;
+        color: #FFFFFF !important;
+        transform: rotate(180deg) !important;
+    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -133,6 +162,13 @@ def detect_intent_texts(text, session_id):
         st.error(f"An error occurred with Dialogflow: {e}")
         return []
 
+def reset_conversation():
+    """Reset the conversation by clearing messages and generating new session ID"""
+    st.session_state.session_id = str(uuid.uuid4())
+    st.session_state.messages = [
+        {"role": "assistant", "content": "Welcome to SoundHopper from the Washington State Ferry System!\n\nI can help you find schedules, discover fares, make reservations, and help with questions about the ferry system.\n\nWhat can I help you with today?"}
+    ]
+
 # ---------- CLEAN CHAT INTERFACE ONLY ----------
 inject_custom_css()
 
@@ -149,6 +185,13 @@ for message in st.session_state.messages:
     avatar = USER_AVATAR if role == "user" else ASSISTANT_AVATAR
     with st.chat_message(role, avatar=avatar):
         st.markdown(message["content"])
+
+# Reset button positioned next to input
+st.markdown('<div class="reset-beside-input">', unsafe_allow_html=True)
+if st.button("🔄", help="Start a new conversation", key="reset_chat"):
+    reset_conversation()
+    st.rerun()
+st.markdown('</div>', unsafe_allow_html=True)
 
 # Chat input
 if prompt := st.chat_input("What can I help you with?"):
