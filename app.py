@@ -67,44 +67,30 @@ def inject_custom_css():
     }
     [data-testid="stChatMessage"] li{ margin:4px 0 !important; }
 
-    /* Custom input container */
-    .custom-input-container {
-        display: flex !important;
-        gap: 8px !important;
-        align-items: stretch !important;
-        margin-top: 16px !important;
-    }
-
-    .input-wrapper {
-        flex: 4 !important;
+    /* Input container with reset button */
+    [data-testid="stChatInput"] {
         position: relative !important;
     }
 
-    .reset-wrapper {
-        flex: 1 !important;
-        max-width: 60px !important;
-    }
-
-    /* Style the input when it's in our custom container */
-    .custom-input-container [data-testid="stChatInput"] > div{
+    [data-testid="stChatInput"] > div{
         background:#FFFFFF !important;
         border:2px solid #00A693 !important;
         border-radius:30px !important;
         min-height:60px !important;
         padding:8px 16px !important;
         position: relative !important;
-        margin: 0 !important;
+        padding-right: 120px !important; /* Make room for both buttons */
     }
-    
-    .custom-input-container [data-testid="stChatInput"] textarea{
+
+    [data-testid="stChatInput"] textarea{
         background:#FFFFFF !important;
         color:#2D3748 !important;
         border:none !important;
         font-size:16px !important;
         padding:12px 16px !important;
     }
-    
-    .custom-input-container [data-testid="stChatInput"] button{
+
+    [data-testid="stChatInput"] button{
         background:#00A693 !important;
         color:#FFFFFF !important;
         border:none !important;
@@ -115,31 +101,33 @@ def inject_custom_css():
         transform:translateY(-50%) !important;
     }
 
-    /* Reset button styling */
-    .reset-wrapper .stButton > button {
-        background: #E0EFEC !important;
-        color: #00A693 !important;
-        border: 2px solid #00A693 !important;
+    /* Reset button positioned above the input */
+    .reset-button-container {
+        position: fixed !important;
+        bottom: 80px !important;
+        right: 20px !important;
+        z-index: 1000 !important;
+    }
+
+    .reset-button-container .stButton > button {
+        background: #00A693 !important;
+        color: #FFFFFF !important;
+        border: none !important;
         border-radius: 50% !important;
-        width: 60px !important;
-        height: 60px !important;
-        font-size: 24px !important;
+        width: 50px !important;
+        height: 50px !important;
+        font-size: 20px !important;
         padding: 0 !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
         transition: all 0.3s ease !important;
+        box-shadow: 0 4px 12px rgba(0, 166, 147, 0.3) !important;
     }
 
-    .reset-wrapper .stButton > button:hover {
-        background: #00A693 !important;
-        color: #FFFFFF !important;
-        transform: rotate(180deg) !important;
-    }
-
-    /* Hide the default input that we'll replace */
-    .hide-default-input [data-testid="stChatInput"] {
-        display: none !important;
+    .reset-button-container .stButton > button:hover {
+        transform: rotate(180deg) scale(1.1) !important;
+        box-shadow: 0 6px 20px rgba(0, 166, 147, 0.4) !important;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -204,31 +192,23 @@ for message in st.session_state.messages:
         st.markdown(message["content"])
 
 # Custom input container with reset button
-st.markdown('<div class="custom-input-container">', unsafe_allow_html=True)
-
-col1, col2 = st.columns([4, 1])
-
-with col1:
-    st.markdown('<div class="input-wrapper">', unsafe_allow_html=True)
-    if prompt := st.chat_input("What can I help you with?"):
-        st.session_state.messages.append({"role": "user", "content": prompt})
-        
-        with st.spinner("Thinking..."):
-            agent_messages = detect_intent_texts(prompt, st.session_state.session_id)
-
-        if agent_messages:
-            for m in agent_messages:
-                if m["type"] == "text":
-                    st.session_state.messages.append({"role": "assistant", "content": m["content"]})
-        
-        st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
-
-with col2:
-    st.markdown('<div class="reset-wrapper">', unsafe_allow_html=True)
-    if st.button("🔄", help="Start a new conversation", key="reset_chat"):
-        reset_conversation()
-        st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
-
+# Reset button (floating above input)
+st.markdown('<div class="reset-button-container">', unsafe_allow_html=True)
+if st.button("🔄", help="Start a new conversation", key="reset_chat"):
+    reset_conversation()
+    st.rerun()
 st.markdown('</div>', unsafe_allow_html=True)
+
+# Chat input (back to original)
+if prompt := st.chat_input("What can I help you with?"):
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    
+    with st.spinner("Thinking..."):
+        agent_messages = detect_intent_texts(prompt, st.session_state.session_id)
+
+    if agent_messages:
+        for m in agent_messages:
+            if m["type"] == "text":
+                st.session_state.messages.append({"role": "assistant", "content": m["content"]})
+    
+    st.rerun()
