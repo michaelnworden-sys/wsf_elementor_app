@@ -49,15 +49,15 @@ def inject_custom_css():
     }
 
     /* Text */
-[data-testid="stChatMessage"] p,
-[data-testid="stChatMessage"] span{
-    color:#000000 !important;
-    font-family: 'Poppins', sans-serif !important;
-    font-size:14px !important;
-    line-height:1.4 !important;
-    white-space:pre-wrap !important;
-    margin:8px 0 !important;
-}
+    [data-testid="stChatMessage"] p,
+    [data-testid="stChatMessage"] span{
+        color:#000000 !important;
+        font-family: 'Poppins', sans-serif !important;
+        font-size:14px !important;
+        line-height:1.4 !important;
+        white-space:pre-wrap !important;
+        margin:8px 0 !important;
+    }
 
     /* Lists */
     [data-testid="stChatMessage"] ul,
@@ -67,23 +67,44 @@ def inject_custom_css():
     }
     [data-testid="stChatMessage"] li{ margin:4px 0 !important; }
 
-    /* Input */
-    [data-testid="stChatInput"] > div{
+    /* Custom input container */
+    .custom-input-container {
+        display: flex !important;
+        gap: 8px !important;
+        align-items: stretch !important;
+        margin-top: 16px !important;
+    }
+
+    .input-wrapper {
+        flex: 4 !important;
+        position: relative !important;
+    }
+
+    .reset-wrapper {
+        flex: 1 !important;
+        max-width: 60px !important;
+    }
+
+    /* Style the input when it's in our custom container */
+    .custom-input-container [data-testid="stChatInput"] > div{
         background:#FFFFFF !important;
         border:2px solid #00A693 !important;
         border-radius:30px !important;
         min-height:60px !important;
         padding:8px 16px !important;
         position: relative !important;
+        margin: 0 !important;
     }
-    [data-testid="stChatInput"] textarea{
+    
+    .custom-input-container [data-testid="stChatInput"] textarea{
         background:#FFFFFF !important;
         color:#2D3748 !important;
         border:none !important;
         font-size:16px !important;
         padding:12px 16px !important;
     }
-    [data-testid="stChatInput"] button{
+    
+    .custom-input-container [data-testid="stChatInput"] button{
         background:#00A693 !important;
         color:#FFFFFF !important;
         border:none !important;
@@ -92,6 +113,33 @@ def inject_custom_css():
         right:10px !important;
         top:50% !important;
         transform:translateY(-50%) !important;
+    }
+
+    /* Reset button styling */
+    .reset-wrapper .stButton > button {
+        background: #E0EFEC !important;
+        color: #00A693 !important;
+        border: 2px solid #00A693 !important;
+        border-radius: 50% !important;
+        width: 60px !important;
+        height: 60px !important;
+        font-size: 24px !important;
+        padding: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        transition: all 0.3s ease !important;
+    }
+
+    .reset-wrapper .stButton > button:hover {
+        background: #00A693 !important;
+        color: #FFFFFF !important;
+        transform: rotate(180deg) !important;
+    }
+
+    /* Hide the default input that we'll replace */
+    .hide-default-input [data-testid="stChatInput"] {
+        display: none !important;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -132,7 +180,12 @@ def detect_intent_texts(text, session_id):
     except Exception as e:
         st.error(f"An error occurred with Dialogflow: {e}")
         return []
-
+def reset_conversation():
+    """Reset the conversation by clearing messages and generating new session ID"""
+    st.session_state.session_id = str(uuid.uuid4())
+    st.session_state.messages = [
+        {"role": "assistant", "content": "Welcome to SoundHopper from the Washington State Ferry System!\n\nI can help you find schedules, discover fares, make reservations, and help with questions about the ferry system.\n\nWhat can I help you with today?"}
+    ]
 # ---------- CLEAN CHAT INTERFACE ONLY ----------
 inject_custom_css()
 
@@ -150,16 +203,32 @@ for message in st.session_state.messages:
     with st.chat_message(role, avatar=avatar):
         st.markdown(message["content"])
 
-# Chat input
-if prompt := st.chat_input("What can I help you with?"):
-    st.session_state.messages.append({"role": "user", "content": prompt})
-    
-    with st.spinner("Thinking..."):
-        agent_messages = detect_intent_texts(prompt, st.session_state.session_id)
+# Custom input container with reset button
+st.markdown('<div class="custom-input-container">', unsafe_allow_html=True)
 
-    if agent_messages:
-        for m in agent_messages:
-            if m["type"] == "text":
-                st.session_state.messages.append({"role": "assistant", "content": m["content"]})
-    
-    st.rerun()
+col1, col2 = st.columns([4, 1])
+
+with col1:
+    st.markdown('<div class="input-wrapper">', unsafe_allow_html=True)
+    if prompt := st.chat_input("What can I help you with?"):
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        
+        with st.spinner("Thinking..."):
+            agent_messages = detect_intent_texts(prompt, st.session_state.session_id)
+
+        if agent_messages:
+            for m in agent_messages:
+                if m["type"] == "text":
+                    st.session_state.messages.append({"role": "assistant", "content": m["content"]})
+        
+        st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
+
+with col2:
+    st.markdown('<div class="reset-wrapper">', unsafe_allow_html=True)
+    if st.button("🔄", help="Start a new conversation", key="reset_chat"):
+        reset_conversation()
+        st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
+
+st.markdown('</div>', unsafe_allow_html=True)
