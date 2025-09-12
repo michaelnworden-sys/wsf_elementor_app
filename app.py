@@ -49,15 +49,15 @@ def inject_custom_css():
     }
 
     /* Text */
-    [data-testid="stChatMessage"] p,
-    [data-testid="stChatMessage"] span{
-        color:#000000 !important;
-        font-family: 'Poppins', sans-serif !important;
-        font-size:14px !important;
-        line-height:1.4 !important;
-        white-space:pre-wrap !important;
-        margin:8px 0 !important;
-    }
+[data-testid="stChatMessage"] p,
+[data-testid="stChatMessage"] span{
+    color:#000000 !important;
+    font-family: 'Poppins', sans-serif !important;
+    font-size:14px !important;
+    line-height:1.4 !important;
+    white-space:pre-wrap !important;
+    margin:8px 0 !important;
+}
 
     /* Lists */
     [data-testid="stChatMessage"] ul,
@@ -67,11 +67,7 @@ def inject_custom_css():
     }
     [data-testid="stChatMessage"] li{ margin:4px 0 !important; }
 
-    /* Input container with reset button */
-    [data-testid="stChatInput"] {
-        position: relative !important;
-    }
-
+    /* Input */
     [data-testid="stChatInput"] > div{
         background:#FFFFFF !important;
         border:2px solid #00A693 !important;
@@ -79,9 +75,7 @@ def inject_custom_css():
         min-height:60px !important;
         padding:8px 16px !important;
         position: relative !important;
-        padding-right: 120px !important; /* Make room for both buttons */
     }
-
     [data-testid="stChatInput"] textarea{
         background:#FFFFFF !important;
         color:#2D3748 !important;
@@ -89,7 +83,6 @@ def inject_custom_css():
         font-size:16px !important;
         padding:12px 16px !important;
     }
-
     [data-testid="stChatInput"] button{
         background:#00A693 !important;
         color:#FFFFFF !important;
@@ -99,35 +92,6 @@ def inject_custom_css():
         right:10px !important;
         top:50% !important;
         transform:translateY(-50%) !important;
-    }
-
-    /* Reset button positioned above the input */
-    .reset-button-container {
-        position: fixed !important;
-        bottom: 80px !important;
-        right: 20px !important;
-        z-index: 1000 !important;
-    }
-
-    .reset-button-container .stButton > button {
-        background: #00A693 !important;
-        color: #FFFFFF !important;
-        border: none !important;
-        border-radius: 50% !important;
-        width: 50px !important;
-        height: 50px !important;
-        font-size: 20px !important;
-        padding: 0 !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        transition: all 0.3s ease !important;
-        box-shadow: 0 4px 12px rgba(0, 166, 147, 0.3) !important;
-    }
-
-    .reset-button-container .stButton > button:hover {
-        transform: rotate(180deg) scale(1.1) !important;
-        box-shadow: 0 6px 20px rgba(0, 166, 147, 0.4) !important;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -168,12 +132,7 @@ def detect_intent_texts(text, session_id):
     except Exception as e:
         st.error(f"An error occurred with Dialogflow: {e}")
         return []
-def reset_conversation():
-    """Reset the conversation by clearing messages and generating new session ID"""
-    st.session_state.session_id = str(uuid.uuid4())
-    st.session_state.messages = [
-        {"role": "assistant", "content": "Welcome to SoundHopper from the Washington State Ferry System!\n\nI can help you find schedules, discover fares, make reservations, and help with questions about the ferry system.\n\nWhat can I help you with today?"}
-    ]
+
 # ---------- CLEAN CHAT INTERFACE ONLY ----------
 inject_custom_css()
 
@@ -191,15 +150,7 @@ for message in st.session_state.messages:
     with st.chat_message(role, avatar=avatar):
         st.markdown(message["content"])
 
-# Custom input container with reset button
-# Reset button (floating above input)
-st.markdown('<div class="reset-button-container">', unsafe_allow_html=True)
-if st.button("🔄", help="Start a new conversation", key="reset_chat"):
-    reset_conversation()
-    st.rerun()
-st.markdown('</div>', unsafe_allow_html=True)
-
-# Chat input (back to original)
+# Chat input
 if prompt := st.chat_input("What can I help you with?"):
     st.session_state.messages.append({"role": "user", "content": prompt})
     
