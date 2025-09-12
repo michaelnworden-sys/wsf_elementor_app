@@ -94,12 +94,14 @@ def inject_custom_css():
         transform:translateY(-50%) !important;
     }
 
+    
     /* Reset button next to input */
     .reset-beside-input {
         position: fixed !important;
-        bottom: 20px !important;
-        right: 80px !important;
+        bottom: 30px !important;
+        right: 20px !important;
         z-index: 999 !important;
+        margin-right: 80px !important;
     }
 
     .reset-beside-input .stButton > button {
