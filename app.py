@@ -44,7 +44,7 @@ def inject_custom_css():
         border:1px solid #E0EFEC !important;
         border-radius:16px !important;
         padding:24px 32px !important;
-        margin:8px 0 !important;
+        margin:4px 0 !important;
         box-shadow:none !important;
     }
 
