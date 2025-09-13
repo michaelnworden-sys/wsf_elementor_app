@@ -38,6 +38,35 @@ def inject_custom_css():
     /* Hide Streamlit branding */
     .main .block-container { padding-top: 0 !important; }
     
+    /* More aggressive top spacing removal */
+    .stApp {
+        padding-top: 0 !important;
+        margin-top: 0 !important;
+    }
+
+    .main {
+        padding-top: 0 !important;
+        margin-top: 0 !important;
+    }
+
+    /* Target the main container */
+    .main > .block-container {
+        padding-top: 0 !important;
+        margin-top: 0 !important;
+        padding-bottom: 0 !important;
+    }
+
+    /* Try negative margins to pull content up */
+    .main .block-container {
+        margin-top: -20px !important;
+    }
+
+    /* Target any other containers */
+    [data-testid="stVerticalBlock"] {
+        padding-top: 0 !important;
+        margin-top: 0 !important;
+    }
+    
     /* Chat message card */
     [data-testid="stChatMessage"]{
         background:#FFFFFF !important;
