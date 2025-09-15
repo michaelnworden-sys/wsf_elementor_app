@@ -4,6 +4,21 @@ from google.oauth2 import service_account
 import uuid
 import base64
 
+# ---------- KEEP-ALIVE FUNCTIONALITY ----------
+def keep_alive():
+    """Internal keep-alive function"""
+    while True:
+        try:
+            time.sleep(36000)  # 10 hours
+            requests.get("https://wsf-chat.streamlit.app/", timeout=30)
+        except:
+            pass
+
+# Start internal keep-alive (runs once per session)
+if "internal_keepalive" not in st.session_state:
+    threading.Thread(target=keep_alive, daemon=True).start()
+    st.session_state.internal_keepalive = True
+
 # ---------- BRAND AVATARS with Ferry and User SVGs ----------
 def svg_to_base64(svg_str):
     return "data:image/svg+xml;base64," + base64.b64encode(svg_str.encode("utf-8")).decode("utf-8")
