@@ -5,19 +5,14 @@ import uuid
 import base64
 
 # ---------- KEEP-ALIVE FUNCTIONALITY ----------
-def keep_alive():
-    """Internal keep-alive function"""
-    while True:
-        try:
-            time.sleep(36000)  # 10 hours
-            requests.get("https://wsf-chat.streamlit.app/", timeout=30)
-        except:
-            pass
-
-# Start internal keep-alive (runs once per session)
-if "internal_keepalive" not in st.session_state:
-    threading.Thread(target=keep_alive, daemon=True).start()
-    st.session_state.internal_keepalive = True
+# ---------- SIMPLE KEEP-ALIVE ----------
+# Simple keep-alive ping (runs when app loads)
+if "keepalive_ping" not in st.session_state:
+    try:
+        requests.get("https://wsf-chat.streamlit.app/", timeout=5)
+        st.session_state.keepalive_ping = time.time()
+    except:
+        pass
 
 # ---------- BRAND AVATARS with Ferry and User SVGs ----------
 def svg_to_base64(svg_str):
