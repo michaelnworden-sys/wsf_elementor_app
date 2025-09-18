@@ -234,21 +234,21 @@ if prompt := st.chat_input("What can I help you with?"):
 
     if agent_messages:
     # DEBUG: Let's see what we're getting
-    st.write("DEBUG - Session params:", session_params)
+        st.write("DEBUG - Session params:", session_params)
     
     # Check if there's an image to display
-    image_url = session_params.get('image_url')
+        image_url = session_params.get('image_url')
     
     # DEBUG: Show what image URL we found
-    st.write("DEBUG - Image URL:", image_url)
+        st.write("DEBUG - Image URL:", image_url)
     
-    for m in agent_messages:
-        if m["type"] == "text":
+        for m in agent_messages:
+            if m["type"] == "text":
             # If we have an image URL, add it to the message
-            if image_url:
+                if image_url:
                 content_with_image = f"IMAGE_URL:{image_url}\n\n{m['content']}"
                 st.session_state.messages.append({"role": "assistant", "content": content_with_image})
                 st.write("DEBUG - Added image to message")
-            else:
+                else:
                 st.session_state.messages.append({"role": "assistant", "content": m["content"]})
                 st.write("DEBUG - No image URL found")
