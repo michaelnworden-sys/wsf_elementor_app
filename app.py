@@ -3,6 +3,8 @@ from google.cloud import dialogflowcx_v3 as dialogflow
 from google.oauth2 import service_account
 import uuid
 import base64
+import requests
+import time
 
 # ---------- KEEP-ALIVE FUNCTIONALITY ----------
 # ---------- SIMPLE KEEP-ALIVE ----------
@@ -155,6 +157,12 @@ def detect_intent_texts(text, session_id):
         response = session_client.detect_intent(request=request)
 
         messages = []
+        session_params = {}
+
+        # Get session parameters (this is where your image URLs are!)
+        if hasattr(response.query_result, 'parameters') and response.query_result.parameters:
+            session_params = dict(response.query_result.parameters)
+
         for msg in response.query_result.response_messages:
             try:
                 if hasattr(msg, 'text') and msg.text:
@@ -166,11 +174,13 @@ def detect_intent_texts(text, session_id):
                     messages.append({"type": "payload", "content": payload})
             except Exception:
                 continue
-        return messages
+        
+        # Add session parameters to the return so we can access image URLs
+        return messages, session_params
 
     except Exception as e:
         st.error(f"An error occurred with Dialogflow: {e}")
-        return []
+        return [], {}
 
 def reset_conversation():
     """Reset the conversation by clearing messages and generating new session ID"""
@@ -200,18 +210,39 @@ for message in st.session_state.messages:
     role = message["role"]
     avatar = USER_AVATAR if role == "user" else ASSISTANT_AVATAR
     with st.chat_message(role, avatar=avatar):
-        st.markdown(message["content"])
+        content = message["content"]
+        
+        # Check if this message has an image
+        if content.startswith("IMAGE_URL:"):
+            # Split the content to get image URL and text
+            parts = content.split("\n\n", 1)
+            image_url = parts[0].replace("IMAGE_URL:", "")
+            text_content = parts[1] if len(parts) > 1 else ""
+            
+            # Display image first, then text
+            st.image(image_url, width=400, caption="Ferry Terminal")
+            st.markdown(text_content)
+        else:
+            st.markdown(content)
 
 # Chat input
 if prompt := st.chat_input("What can I help you with?"):
     st.session_state.messages.append({"role": "user", "content": prompt})
     
     with st.spinner("Thinking..."):
-        agent_messages = detect_intent_texts(prompt, st.session_state.session_id)
+        agent_messages, session_params = detect_intent_texts(prompt, st.session_state.session_id)
 
     if agent_messages:
+        # Check if there's an image to display
+        image_url = session_params.get('image_url')
+        
         for m in agent_messages:
             if m["type"] == "text":
-                st.session_state.messages.append({"role": "assistant", "content": m["content"]})
+                # If we have an image URL, add it to the message
+                if image_url:
+                    content_with_image = f"IMAGE_URL:{image_url}\n\n{m['content']}"
+                    st.session_state.messages.append({"role": "assistant", "content": content_with_image})
+                else:
+                    st.session_state.messages.append({"role": "assistant", "content": m["content"]})
     
     st.rerun()
