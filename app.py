@@ -152,41 +152,32 @@ def detect_intent_texts(text, session_id):
 
         response = session_client.detect_intent(request=request)
 
-        # This list will hold all our parsed messages (text and images)
         parsed_messages = []
 
-        # First, check if we have session parameters (where your Cloud Function puts the data)
+        # Get the nested parameters where your Cloud Function data lives
         session_params = {}
         if hasattr(response.query_result, 'parameters') and response.query_result.parameters:
-            session_params = dict(response.query_result.parameters)
+            params_dict = dict(response.query_result.parameters)
+            
+            # Navigate to the deeply nested structure we saw in the debug
+            if 'exploreTerminalArea_response' in params_dict:
+                explore_response = params_dict['exploreTerminalArea_response']
+                if 'sessionInfo' in explore_response:
+                    session_info = explore_response['sessionInfo']
+                    if 'parameters' in session_info:
+                        session_params = session_info['parameters']
 
-        # Check if we have an image URL in the session parameters
+        # Check if we have an image URL in the nested parameters
         if 'image_url' in session_params:
             image_url = session_params['image_url']
             parsed_messages.append({"role": "assistant", "type": "image", "content": image_url})
 
-        # Then process regular text messages
+        # Process text messages normally
         for msg in response.query_result.response_messages:
-            # Case 1: The message is simple text
             if msg.text:
                 for t in msg.text.text:
                     if t.strip():
                         parsed_messages.append({"role": "assistant", "type": "text", "content": t})
-
-            # Case 2: Check payload as backup (in case richContent is used elsewhere)
-            elif msg.payload:
-                payload = dict(msg.payload)
-                if 'richContent' in payload and payload['richContent']:
-                    for rich_section in payload['richContent']:
-                        for rich_item in rich_section:
-                            if rich_item.get('type') == 'image':
-                                image_url = rich_item.get('rawUrl')
-                                if image_url:
-                                    parsed_messages.append({"role": "assistant", "type": "image", "content": image_url})
-                            elif rich_item.get('type') == 'text':
-                                text_content = rich_item.get('text')
-                                if text_content:
-                                    parsed_messages.append({"role": "assistant", "type": "text", "content": text_content})
         
         return parsed_messages
 
