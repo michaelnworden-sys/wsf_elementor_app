@@ -159,7 +159,7 @@ def detect_intent_texts(text, session_id):
         if hasattr(response.query_result, 'parameters') and response.query_result.parameters:
             params_dict = dict(response.query_result.parameters)
             
-            # Navigate to the deeply nested structure we saw in the debug
+            # Navigate to the deeply nested structure
             if 'exploreTerminalArea_response' in params_dict:
                 explore_response = params_dict['exploreTerminalArea_response']
                 if 'sessionInfo' in explore_response:
@@ -167,17 +167,19 @@ def detect_intent_texts(text, session_id):
                     if 'parameters' in session_info:
                         session_params = session_info['parameters']
 
-        # Check if we have an image URL in the nested parameters
+        # FIRST: Add image if we have one (so it appears first)
         if 'image_url' in session_params:
             image_url = session_params['image_url']
             parsed_messages.append({"role": "assistant", "type": "image", "content": image_url})
 
-        # Process text messages normally
+        # SECOND: Add text messages
         for msg in response.query_result.response_messages:
             if msg.text:
                 for t in msg.text.text:
                     if t.strip():
-                        parsed_messages.append({"role": "assistant", "type": "text", "content": t})
+                        # Skip debug messages
+                        if not t.startswith("DEBUG:") and not t == "END DEBUG":
+                            parsed_messages.append({"role": "assistant", "type": "text", "content": t})
         
         return parsed_messages
 
