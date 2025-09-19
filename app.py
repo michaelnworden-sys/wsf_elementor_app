@@ -7,8 +7,6 @@ import requests
 import time
 
 # ---------- KEEP-ALIVE FUNCTIONALITY ----------
-# ---------- SIMPLE KEEP-ALIVE ----------
-# Simple keep-alive ping (runs when app loads)
 if "keepalive_ping" not in st.session_state:
     try:
         requests.get("https://wsf-chat.streamlit.app/", timeout=5)
@@ -20,7 +18,6 @@ if "keepalive_ping" not in st.session_state:
 def svg_to_base64(svg_str):
     return "data:image/svg+xml;base64," + base64.b64encode(svg_str.encode("utf-8")).decode("utf-8")
 
-# User avatar: teal background with white user icon
 user_svg = '''<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64">
 <circle cx="32" cy="32" r="32" fill="#00A693"/>
 <svg x="16" y="16" width="32" height="32" viewBox="0 0 640 640">
@@ -28,7 +25,6 @@ user_svg = '''<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64">
 </svg>
 </svg>'''
 
-# Assistant avatar: light teal background with dark green ferry icon
 assistant_svg = '''<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64">
 <circle cx="32" cy="32" r="32" fill="#E0EFEC"/>
 <svg x="16" y="16" width="32" height="32" viewBox="0 0 640 640">
@@ -145,8 +141,6 @@ def detect_intent_texts(text, session_id):
     location = "global"
     client_options = {"api_endpoint": f"{location}-dialogflow.googleapis.com"}
     try:
-        st.write("DEBUG - Inside detect_intent_texts function")
-        
         credentials_info = st.secrets["gcp_service_account"]
         credentials = service_account.Credentials.from_service_account_info(credentials_info)
         session_client = dialogflow.SessionsClient(client_options=client_options, credentials=credentials)
@@ -156,39 +150,47 @@ def detect_intent_texts(text, session_id):
         query_input = dialogflow.QueryInput(text=text_input, language_code="en")
         request = dialogflow.DetectIntentRequest(session=session_path, query_input=query_input)
 
-        st.write("DEBUG - About to call Dialogflow API")
         response = session_client.detect_intent(request=request)
-        st.write("DEBUG - Got response from Dialogflow")
 
-        messages = []
+        # This list will hold all our parsed messages (text and images)
+        parsed_messages = []
+
+        # Loop through all response messages from Dialogflow
         for msg in response.query_result.response_messages:
-            try:
-                if hasattr(msg, 'text') and msg.text:
-                    for t in msg.text.text:
-                        if t.strip():
-                            messages.append({"type": "text", "content": t})
-            except Exception:
-                continue
+            # Case 1: The message is simple text
+            if msg.text:
+                for t in msg.text.text:
+                    if t.strip():
+                        parsed_messages.append({"role": "assistant", "type": "text", "content": t})
+
+            # Case 2: The message is a payload (this is where our image is)
+            if msg.payload:
+                payload = dict(msg.payload)
+                # Check if the payload has the richContent structure we defined
+                if 'richContent' in payload and payload['richContent']:
+                    # The structure is a list of lists, so we access [0][0]
+                    rich_item = payload['richContent'][0][0]
+                    if rich_item.get('type') == 'image':
+                        image_url = rich_item.get('rawUrl')
+                        if image_url:
+                            # Add a specific "image" message to our list
+                            parsed_messages.append({"role": "assistant", "type": "image", "content": image_url})
         
-        st.write("DEBUG - Processed messages, returning")
-        return messages, {}
+        return parsed_messages
 
     except Exception as e:
-        st.write("DEBUG - Error occurred:", str(e))
         st.error(f"An error occurred with Dialogflow: {e}")
-        return [], {}
+        return [{"role": "assistant", "type": "text", "content": "Sorry, I'm having trouble connecting right now."}]
 
 def reset_conversation():
-    """Reset the conversation by clearing messages and generating new session ID"""
     st.session_state.session_id = str(uuid.uuid4())
     st.session_state.messages = [
-        {"role": "assistant", "content": "Welcome to SoundHopper from the Washington State Ferry System!\n\nI can help you find schedules, discover fares, make reservations, and help with questions about the ferry system.\n\nWhat can I help you with today?"}
+        {"role": "assistant", "type": "text", "content": "Welcome to SoundHopper from the Washington State Ferry System!\n\nI can help you find schedules, discover fares, make reservations, and help with questions about the ferry system.\n\nWhat can I help you with today?"}
     ]
 
 # ---------- CLEAN CHAT INTERFACE ONLY ----------
 inject_custom_css()
 
-# Check for reset parameter from WordPress
 if st.query_params.get("reset") == "true":
     reset_conversation()
     st.query_params.clear()
@@ -198,7 +200,7 @@ if "session_id" not in st.session_state:
     st.session_state.session_id = str(uuid.uuid4())
 if "messages" not in st.session_state:
     st.session_state.messages = [
-        {"role": "assistant", "content": "Welcome to SoundHopper from the Washington State Ferry System!\n\nI can help you find schedules, discover fares, make reservations, and help with questions about the ferry system.\n\nWhat can I help you with today?"}
+        {"role": "assistant", "type": "text", "content": "Welcome to SoundHopper from the Washington State Ferry System!\n\nI can help you find schedules, discover fares, make reservations, and help with questions about the ferry system.\n\nWhat can I help you with today?"}
     ]
 
 # Display chat history
@@ -206,37 +208,27 @@ for message in st.session_state.messages:
     role = message["role"]
     avatar = USER_AVATAR if role == "user" else ASSISTANT_AVATAR
     with st.chat_message(role, avatar=avatar):
-        content = message["content"]
         
-        # Check if this message has an image
-        if content.startswith("IMAGE_URL:"):
-            # Split the content to get image URL and text
-            parts = content.split("\n\n", 1)
-            image_url = parts[0].replace("IMAGE_URL:", "")
-            text_content = parts[1] if len(parts) > 1 else ""
-            
-            # Display image first, then text
-            st.image(image_url, width=400, caption="Ferry Terminal")
-            st.markdown(text_content)
-        else:
-            st.markdown(content)
+        # Check the "type" of the message to decide how to render it
+        message_type = message.get("type", "text") # Default to text if type isn't specified
+
+        if message_type == "image":
+            st.image(message["content"], width=400, caption="Ferry Terminal")
+        else: # This handles "text" and any older messages without a type
+            st.markdown(message["content"])
 
 # Chat input
 if prompt := st.chat_input("What can I help you with?"):
-    st.session_state.messages.append({"role": "user", "content": prompt})
+    # Add user message to history
+    st.session_state.messages.append({"role": "user", "type": "text", "content": prompt})
     
-    st.write("DEBUG - About to call Dialogflow")
-    
+    # Get response from Dialogflow
     with st.spinner("Thinking..."):
-        agent_messages, session_params = detect_intent_texts(prompt, st.session_state.session_id)
-    
-    st.write("DEBUG - Got back from Dialogflow")
-    st.write("DEBUG - Agent messages:", agent_messages)
-    st.write("DEBUG - Session params:", session_params)
+        agent_messages = detect_intent_texts(prompt, st.session_state.session_id)
 
-    if agent_messages:
-        for m in agent_messages:
-            if m["type"] == "text":
-                st.session_state.messages.append({"role": "assistant", "content": m["content"]})
+    # Add all of the agent's messages (could be images, text, etc.) to history
+    for msg in agent_messages:
+        st.session_state.messages.append(msg)
     
+    # Rerun the app to display the new messages
     st.rerun()
