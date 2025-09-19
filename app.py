@@ -5,9 +5,10 @@ import uuid
 import base64
 import requests
 import time
-from google.protobuf.json_format import MessageToDict
 
 # ---------- KEEP-ALIVE FUNCTIONALITY ----------
+# ---------- SIMPLE KEEP-ALIVE ----------
+# Simple keep-alive ping (runs when app loads)
 if "keepalive_ping" not in st.session_state:
     try:
         requests.get("https://wsf-chat.streamlit.app/", timeout=5)
@@ -19,6 +20,7 @@ if "keepalive_ping" not in st.session_state:
 def svg_to_base64(svg_str):
     return "data:image/svg+xml;base64," + base64.b64encode(svg_str.encode("utf-8")).decode("utf-8")
 
+# User avatar: teal background with white user icon
 user_svg = '''<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64">
 <circle cx="32" cy="32" r="32" fill="#00A693"/>
 <svg x="16" y="16" width="32" height="32" viewBox="0 0 640 640">
@@ -26,6 +28,7 @@ user_svg = '''<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64">
 </svg>
 </svg>'''
 
+# Assistant avatar: light teal background with dark green ferry icon
 assistant_svg = '''<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64">
 <circle cx="32" cy="32" r="32" fill="#E0EFEC"/>
 <svg x="16" y="16" width="32" height="32" viewBox="0 0 640 640">
@@ -134,13 +137,10 @@ def inject_custom_css():
     </style>
     """, unsafe_allow_html=True)
 
-# ---------- Dialogflow CX Configuration ----------
+# ---------- Dialogflow CX ----------
 PROJECT_ID = "lumina-content-intelligence"
 AGENT_ID   = "39100170-63ca-4c8e-8c10-b8d6c1d1b55a"
 
-# =================================================================
-# ========== THIS IS THE CORRECTED PARSING LOGIC ==================
-# =================================================================
 def detect_intent_texts(text, session_id):
     location = "global"
     client_options = {"api_endpoint": f"{location}-dialogflow.googleapis.com"}
@@ -156,71 +156,64 @@ def detect_intent_texts(text, session_id):
 
         response = session_client.detect_intent(request=request)
 
-        st.session_state.debug_info = MessageToDict(response._pb)
-
-        parsed_messages = []
-        
-        params = response.query_result.parameters
-
-        # THE FIX IS HERE: Check if 'params' exists before using it.
-        if params:
-            if params.get("type") == "terminal_description":
-                image_url = params.get("image_url")
-                description = params.get("description")
-                
-                if image_url:
-                    parsed_messages.append({"role": "assistant", "type": "image", "content": image_url})
-                if description:
-                    parsed_messages.append({"role": "assistant", "type": "text", "content": description})
-        
-        if not parsed_messages:
-            for msg in response.query_result.response_messages:
-                if msg.text:
+        messages = []
+        for msg in response.query_result.response_messages:
+            try:
+                if hasattr(msg, 'text') and msg.text:
                     for t in msg.text.text:
                         if t.strip():
-                            parsed_messages.append({"role": "assistant", "type": "text", "content": t})
-        
-        return parsed_messages
+                            messages.append({"type": "text", "content": t})
+                elif hasattr(msg, 'payload') and msg.payload:
+                    payload = dict(msg.payload)
+                    messages.append({"type": "payload", "content": payload})
+            except Exception:
+                continue
+        return messages
 
     except Exception as e:
-        st.session_state.debug_info = {"error": str(e)}
-        return [{"role": "assistant", "type": "text", "content": "Sorry, I'm having trouble connecting right now."}]
+        st.error(f"An error occurred with Dialogflow: {e}")
+        return []
 
 def reset_conversation():
+    """Reset the conversation by clearing messages and generating new session ID"""
     st.session_state.session_id = str(uuid.uuid4())
     st.session_state.messages = [
-        {"role": "assistant", "type": "text", "content": "Welcome to SoundHopper from the Washington State Ferry System!\n\nI can help you find schedules, discover fares, make reservations, and help with questions about the ferry system.\n\nWhat can I help you with today?"}
+        {"role": "assistant", "content": "Welcome to SoundHopper from the Washington State Ferry System!\n\nI can help you find schedules, discover fares, make reservations, and help with questions about the ferry system.\n\nWhat can I help you with today?"}
     ]
-    if 'debug_info' in st.session_state:
-        del st.session_state.debug_info
 
-# ---------- MAIN APP LOGIC ----------
+# ---------- CLEAN CHAT INTERFACE ONLY ----------
 inject_custom_css()
 
-if "session_id" not in st.session_state:
+# Check for reset parameter from WordPress
+if st.query_params.get("reset") == "true":
     reset_conversation()
+    st.query_params.clear()
+    st.rerun()
 
-if 'debug_info' in st.session_state:
-    with st.expander("Last Dialogflow Response (DEBUG)"):
-        st.json(st.session_state.debug_info)
+if "session_id" not in st.session_state:
+    st.session_state.session_id = str(uuid.uuid4())
+if "messages" not in st.session_state:
+    st.session_state.messages = [
+        {"role": "assistant", "content": "Welcome to SoundHopper from the Washington State Ferry System!\n\nI can help you find schedules, discover fares, make reservations, and help with questions about the ferry system.\n\nWhat can I help you with today?"}
+    ]
 
+# Display chat history
 for message in st.session_state.messages:
     role = message["role"]
     avatar = USER_AVATAR if role == "user" else ASSISTANT_AVATAR
     with st.chat_message(role, avatar=avatar):
-        message_type = message.get("type", "text")
-        if message_type == "image":
-            st.image(message["content"])
-        else:
-            st.markdown(message["content"])
+        st.markdown(message["content"])
 
+# Chat input
 if prompt := st.chat_input("What can I help you with?"):
-    st.session_state.messages.append({"role": "user", "type": "text", "content": prompt})
+    st.session_state.messages.append({"role": "user", "content": prompt})
     
     with st.spinner("Thinking..."):
         agent_messages = detect_intent_texts(prompt, st.session_state.session_id)
 
-    for msg in agent_messages:
-        st.session_state.messages.append(msg)
+    if agent_messages:
+        for m in agent_messages:
+            if m["type"] == "text":
+                st.session_state.messages.append({"role": "assistant", "content": m["content"]})
     
     st.rerun()
