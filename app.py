@@ -159,9 +159,25 @@ def detect_intent_texts(text, session_id):
         messages = []
         session_params = {}
 
-        # Get session parameters (this is where your image URLs are!)
+        # DEBUG: Let's see the entire response structure
+        st.write("DEBUG - Full response:", response)
+
+        # Check multiple places for session parameters
         if hasattr(response.query_result, 'parameters') and response.query_result.parameters:
-            session_params = dict(response.query_result.parameters)
+            session_params.update(dict(response.query_result.parameters))
+            
+        if hasattr(response, 'session_info') and response.session_info:
+            if hasattr(response.session_info, 'parameters') and response.session_info.parameters:
+                session_params.update(dict(response.session_info.parameters))
+
+        # Also check if parameters are nested in the response
+        if hasattr(response.query_result, 'webhook_payloads'):
+            for payload in response.query_result.webhook_payloads:
+                payload_dict = dict(payload)
+                if 'sessionInfo' in payload_dict and 'parameters' in payload_dict['sessionInfo']:
+                    session_params.update(payload_dict['sessionInfo']['parameters'])
+
+        st.write("DEBUG - Found session params:", session_params)
 
         for msg in response.query_result.response_messages:
             try:
@@ -175,7 +191,6 @@ def detect_intent_texts(text, session_id):
             except Exception:
                 continue
         
-        # Add session parameters to the return so we can access image URLs
         return messages, session_params
 
     except Exception as e:
