@@ -139,7 +139,7 @@ PROJECT_ID = "lumina-content-intelligence"
 AGENT_ID   = "39100170-63ca-4c8e-8c10-b8d6c1d1b55a"
 
 # =================================================================
-# ========== THIS IS THE NEW, SIMPLIFIED PARSING LOGIC ==========
+# ========== THIS IS THE CORRECTED PARSING LOGIC ==================
 # =================================================================
 def detect_intent_texts(text, session_id):
     location = "global"
@@ -156,31 +156,23 @@ def detect_intent_texts(text, session_id):
 
         response = session_client.detect_intent(request=request)
 
-        # --- DEBUGGING TRICK: Save the full response to the session state ---
-        # This will survive the st.rerun() call, allowing you to see the data.
         st.session_state.debug_info = MessageToDict(response._pb)
 
-        # This list will hold all our parsed messages
         parsed_messages = []
         
-        # The Golden Rule: All the data from our function is in the parameters.
         params = response.query_result.parameters
 
-        # Check for our specific "general info" response from the Cloud Function
-        if params.get("type") == "terminal_description":
-            image_url = params.get("image_url")
-            description = params.get("description")
-            
-            # If we found an image_url, create an "image" message
-            if image_url:
-                parsed_messages.append({"role": "assistant", "type": "image", "content": image_url})
-            
-            # If we found a description, create a "text" message
-            if description:
-                parsed_messages.append({"role": "assistant", "type": "text", "content": description})
+        # THE FIX IS HERE: Check if 'params' exists before using it.
+        if params:
+            if params.get("type") == "terminal_description":
+                image_url = params.get("image_url")
+                description = params.get("description")
+                
+                if image_url:
+                    parsed_messages.append({"role": "assistant", "type": "image", "content": image_url})
+                if description:
+                    parsed_messages.append({"role": "assistant", "type": "text", "content": description})
         
-        # Fallback for all other text responses from the agent (like greetings, etc.)
-        # This runs if the above block didn't find a terminal description.
         if not parsed_messages:
             for msg in response.query_result.response_messages:
                 if msg.text:
@@ -191,57 +183,44 @@ def detect_intent_texts(text, session_id):
         return parsed_messages
 
     except Exception as e:
-        # If something goes wrong, save the error for debugging
         st.session_state.debug_info = {"error": str(e)}
         return [{"role": "assistant", "type": "text", "content": "Sorry, I'm having trouble connecting right now."}]
 
 def reset_conversation():
-    """Reset the conversation by clearing messages and generating new session ID"""
     st.session_state.session_id = str(uuid.uuid4())
     st.session_state.messages = [
         {"role": "assistant", "type": "text", "content": "Welcome to SoundHopper from the Washington State Ferry System!\n\nI can help you find schedules, discover fares, make reservations, and help with questions about the ferry system.\n\nWhat can I help you with today?"}
     ]
-    # Also clear the debug info on reset
     if 'debug_info' in st.session_state:
         del st.session_state.debug_info
 
 # ---------- MAIN APP LOGIC ----------
 inject_custom_css()
 
-# Initialize session state if it doesn't exist
 if "session_id" not in st.session_state:
     reset_conversation()
 
-# --- Display the persistent debug info at the top of the app ---
 if 'debug_info' in st.session_state:
     with st.expander("Last Dialogflow Response (DEBUG)"):
         st.json(st.session_state.debug_info)
 
-# Display chat history
 for message in st.session_state.messages:
     role = message["role"]
     avatar = USER_AVATAR if role == "user" else ASSISTANT_AVATAR
     with st.chat_message(role, avatar=avatar):
-        # Check the "type" of the message to decide how to render it
-        message_type = message.get("type", "text") # Default to text
-        
+        message_type = message.get("type", "text")
         if message_type == "image":
             st.image(message["content"])
-        else: # This handles "text" and any older messages without a type
+        else:
             st.markdown(message["content"])
 
-# Chat input
 if prompt := st.chat_input("What can I help you with?"):
-    # Add user message to history
     st.session_state.messages.append({"role": "user", "type": "text", "content": prompt})
     
-    # Get response from Dialogflow
     with st.spinner("Thinking..."):
         agent_messages = detect_intent_texts(prompt, st.session_state.session_id)
 
-    # Add all of the agent's messages (could be images, text, etc.) to history
     for msg in agent_messages:
         st.session_state.messages.append(msg)
     
-    # Rerun the app to display the new messages
     st.rerun()
