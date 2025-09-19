@@ -145,6 +145,8 @@ def detect_intent_texts(text, session_id):
     location = "global"
     client_options = {"api_endpoint": f"{location}-dialogflow.googleapis.com"}
     try:
+        st.write("DEBUG - Inside detect_intent_texts function")
+        
         credentials_info = st.secrets["gcp_service_account"]
         credentials = service_account.Credentials.from_service_account_info(credentials_info)
         session_client = dialogflow.SessionsClient(client_options=client_options, credentials=credentials)
@@ -154,46 +156,25 @@ def detect_intent_texts(text, session_id):
         query_input = dialogflow.QueryInput(text=text_input, language_code="en")
         request = dialogflow.DetectIntentRequest(session=session_path, query_input=query_input)
 
+        st.write("DEBUG - About to call Dialogflow API")
         response = session_client.detect_intent(request=request)
+        st.write("DEBUG - Got response from Dialogflow")
 
         messages = []
-        session_params = {}
-
-        # DEBUG: Let's see the entire response structure
-        st.write("DEBUG - Full response:", response)
-
-        # Check multiple places for session parameters
-        if hasattr(response.query_result, 'parameters') and response.query_result.parameters:
-            session_params.update(dict(response.query_result.parameters))
-            
-        if hasattr(response, 'session_info') and response.session_info:
-            if hasattr(response.session_info, 'parameters') and response.session_info.parameters:
-                session_params.update(dict(response.session_info.parameters))
-
-        # Also check if parameters are nested in the response
-        if hasattr(response.query_result, 'webhook_payloads'):
-            for payload in response.query_result.webhook_payloads:
-                payload_dict = dict(payload)
-                if 'sessionInfo' in payload_dict and 'parameters' in payload_dict['sessionInfo']:
-                    session_params.update(payload_dict['sessionInfo']['parameters'])
-
-        st.write("DEBUG - Found session params:", session_params)
-
         for msg in response.query_result.response_messages:
             try:
                 if hasattr(msg, 'text') and msg.text:
                     for t in msg.text.text:
                         if t.strip():
                             messages.append({"type": "text", "content": t})
-                elif hasattr(msg, 'payload') and msg.payload:
-                    payload = dict(msg.payload)
-                    messages.append({"type": "payload", "content": payload})
             except Exception:
                 continue
         
-        return messages, session_params
+        st.write("DEBUG - Processed messages, returning")
+        return messages, {}
 
     except Exception as e:
+        st.write("DEBUG - Error occurred:", str(e))
         st.error(f"An error occurred with Dialogflow: {e}")
         return [], {}
 
@@ -244,28 +225,18 @@ for message in st.session_state.messages:
 if prompt := st.chat_input("What can I help you with?"):
     st.session_state.messages.append({"role": "user", "content": prompt})
     
+    st.write("DEBUG - About to call Dialogflow")
+    
     with st.spinner("Thinking..."):
         agent_messages, session_params = detect_intent_texts(prompt, st.session_state.session_id)
+    
+    st.write("DEBUG - Got back from Dialogflow")
+    st.write("DEBUG - Agent messages:", agent_messages)
+    st.write("DEBUG - Session params:", session_params)
 
     if agent_messages:
-        # DEBUG: Let's see what we're getting
-        st.write("DEBUG - Session params:", session_params)
-        
-        # Check if there's an image to display
-        image_url = session_params.get('image_url')
-        
-        # DEBUG: Show what image URL we found
-        st.write("DEBUG - Image URL:", image_url)
-        
         for m in agent_messages:
             if m["type"] == "text":
-                # If we have an image URL, add it to the message
-                if image_url:
-                    content_with_image = f"IMAGE_URL:{image_url}\n\n{m['content']}"
-                    st.session_state.messages.append({"role": "assistant", "content": content_with_image})
-                    st.write("DEBUG - Added image to message")
-                else:
-                    st.session_state.messages.append({"role": "assistant", "content": m["content"]})
-                    st.write("DEBUG - No image URL found")
+                st.session_state.messages.append({"role": "assistant", "content": m["content"]})
     
     st.rerun()
