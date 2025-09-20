@@ -125,7 +125,7 @@ def inject_custom_css():
         padding:12px 16px !important;
     }
     [data-testid="stChatInput"] button{
-        background:#00A693 !important;
+        background:#00A693 !importanT;
         color:#FFFFFF !important;
         border:none !important;
         border-radius:50% !important;
@@ -140,6 +140,8 @@ def inject_custom_css():
 # ---------- Dialogflow CX ----------
 PROJECT_ID = "lumina-content-intelligence"
 AGENT_ID   = "39100170-63ca-4c8e-8c10-b8d6c1d1b55a"
+# <<< CHANGE 1: ADDED YOUR ENVIRONMENT ID HERE >>>
+ENVIRONMENT_ID = "4f56f3d1-4248-4ce4-ba90-2846f1847187"
 
 def detect_intent_texts(text, session_id):
     location = "global"
@@ -148,7 +150,10 @@ def detect_intent_texts(text, session_id):
         credentials_info = st.secrets["gcp_service_account"]
         credentials = service_account.Credentials.from_service_account_info(credentials_info)
         session_client = dialogflow.SessionsClient(client_options=client_options, credentials=credentials)
-        session_path = session_client.session_path(project=PROJECT_ID, location=location, agent=AGENT_ID, session=session_id)
+        
+        # <<< CHANGE 2: MODIFIED THE SESSION PATH LOGIC >>>
+        # The new path now includes your specific Production Environment ID
+        session_path = f"projects/{PROJECT_ID}/locations/{location}/agents/{AGENT_ID}/environments/{ENVIRONMENT_ID}/sessions/{session_id}"
 
         text_input = dialogflow.TextInput(text=text)
         query_input = dialogflow.QueryInput(text=text_input, language_code="en")
